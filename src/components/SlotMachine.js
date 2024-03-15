@@ -35,11 +35,13 @@ const SlotMachine = () => {
   };
 
   return (
-    <div className="slot-machine" style={{ display: 'flex'}}>
-      {reels.map((images, index) => (
-        <Reel key={index} images={images} ref={reelRefs.current[index]} />
-      ))}
-      <button onClick={startAllSpins}>Start All Reels</button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black ">
+      <div className="flex space-x-2">
+        {reels.map((images, index) => (
+          <Reel key={index} images={images} ref={reelRefs.current[index]} />
+        ))}
+      </div>
+      <button className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={startAllSpins}>Start All Reels</button>
     </div>
   );
 };

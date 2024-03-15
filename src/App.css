@@ -56,3 +56,6 @@
     transform: translateY(-100%); /* Это значение можно настроить */
   }
 }
+.shadow-neon {
+  box-shadow: 0 0 10px rgba(0, 255, 255, 1);
+}

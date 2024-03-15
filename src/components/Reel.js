@@ -43,24 +43,20 @@ export const Reel = forwardRef(({ images }, ref) => {
     },
   }));
 
+  
+
   return (
-    <div style={{ overflow: 'hidden', width: '100px', height: '300px', position: 'relative' }}>
-      <motion.div
-        animate={controls}
-        initial={{ y: 0 }}
-        style={{ display: 'flex', flexDirection: 'column' }}
-      >
+    <div className="relative overflow-hidden sm:w-24 h-96 border-4 border-blue-500 rounded-lg shadow-neon">
+      <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
-          <img
-            key={`${img}-${index}`} // Обеспечиваем уникальность ключа
-            src={img}
-            alt={`Image ${index}`}
-            style={{ width: '100%', height: 'auto' }}
-          />
+          <img key={index} src={img} alt={`Symbol ${index}`} className="w-full object-cover" />
         ))}
       </motion.div>
     </div>
   );
+
+
+
 });
 
 export default Reel;
