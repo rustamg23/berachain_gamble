@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import TailspinNFT from './pages/TailspinNFT';
 import TailspinToken from './pages/TailspinToken';
-import {Reel} from './components/Reel';
-
+import SlotMachine from './components/SlotMachine';
 import at_at from './components/assets/symbols/a.svg';
 import c3po from './components/assets/symbols/b.svg';
 import darth_vader from './components/assets/symbols/c.svg';
@@ -31,7 +30,7 @@ function App() {
         <Routes>
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
-          <Route path="/slots" element={<Reel images={reels} />}/>
+          <Route path="/slots" element={<SlotMachine />}/>
         </Routes>
       </BrowserRouter>
 
