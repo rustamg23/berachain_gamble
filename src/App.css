@@ -40,3 +40,19 @@
     transform: rotate(360deg);
   }
 }
+
+
+.reel {
+  display: flex;
+  flex-direction: column;
+  animation: spin 10s infinite linear;
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%); /* Это значение можно настроить */
+  }
+}
