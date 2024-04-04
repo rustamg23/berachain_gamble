@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import bera from '../img/bera.png';
+import GameSwitcher from './GameSwitcher';
 
 export default function TailspinNFT() {
     const [sliderValue, setSliderValue] = useState(1);
@@ -30,6 +31,7 @@ export default function TailspinNFT() {
 
     return (
         <div className={`min-h-screen bg-orange-700 flex flex-col items-center justify-center text-white py-8`}>
+            <GameSwitcher />
             <div className="flex flex-col items-center justify-center space-y-5 w-full max-w-lg">
                 <div className={`${rotateClass} w-full flex justify-center`}>
                     <img src={bera} alt="Descriptive Alt Text" className="mb-4 w-48 h-48 object-cover" />

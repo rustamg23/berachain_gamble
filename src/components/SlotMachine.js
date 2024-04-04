@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Reel  from './Reel';
-
+import GameSwitcher from './GameSwitcher';
 // Импортируйте ваши изображения
 import a from './assets/symbols/a.svg';
 import b from './assets/symbols/b.svg';
@@ -36,6 +36,7 @@ const SlotMachine = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black ">
+      <GameSwitcher/>
       <div className="flex space-x-2">
         {reels.map((images, index) => (
           <Reel key={index} images={images} ref={reelRefs.current[index]} />

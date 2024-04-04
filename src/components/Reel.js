@@ -46,7 +46,7 @@ export const Reel = forwardRef(({ images }, ref) => {
   
 
   return (
-    <div className="relative overflow-hidden sm:w-24 h-96 border-4 border-blue-500 rounded-lg shadow-neon">
+    <div className="relative overflow-hidden sm:w-24 sm:h-17 h-14 border-4 border-blue-500 rounded-lg shadow-neon">
       <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
           <img key={index} src={img} alt={`Symbol ${index}`} className="w-full object-cover" />
@@ -60,3 +60,7 @@ export const Reel = forwardRef(({ images }, ref) => {
 });
 
 export default Reel;
+
+
+
+
