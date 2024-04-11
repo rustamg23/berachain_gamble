@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import TailspinNFT from './components/TailspinNFT';
 import TailspinToken from './components/TailspinToken';
 import SlotMachine from './components/SlotMachine';
@@ -28,6 +28,7 @@ function App() {
 
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Navigate replace to="/token" />} />
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>
