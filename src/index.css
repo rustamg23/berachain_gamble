@@ -30,6 +30,22 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   }
 }
 
+@media (min-width: 900px) {
+  .bg {
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
+@media (max-width: 900px) {
+  .bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
 .bowlby-font {
   font-family: "Bowlby One", sans-serif;
   font-style: normal;

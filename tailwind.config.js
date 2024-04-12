@@ -4,6 +4,7 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
+
     extend: {
       boxShadow: {
         'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.5)', // Пример текстовой тени
@@ -14,6 +15,8 @@ module.exports = {
       height: {
         '14': '272px',
         '17': '17rem',
+        '80': '80vh',
+        '50': '50vh',
       },
       fontSize: {
         '100': '100px',
