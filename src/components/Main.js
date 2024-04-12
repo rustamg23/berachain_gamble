@@ -1,4 +1,4 @@
-import bearImage from '../img/mainbg.png'; // Замените путь к вашему изображению медведя
+import bearImage from '../img/mainbg.png'; 
 import discord from '../img/discord.png';
 import mirror from '../img/mirror.png';
 import x from '../img/x.png';
@@ -24,7 +24,6 @@ function Main() {
     <div className="flex justify-around items-center h-screen bg-cover bg-no-repeat bg-center " style={{ backgroundImage: `url(${bearImage})`, backgroundSize: 'cover', backgroundRepeat: 'repeat' }}>
       <div className="absolute top-5 left-5 flex space-x-2">
       
-      {/* Добавьте другие иконки здесь */}
     </div>
       <div className="max-w-2xl text-left space-y-8 -ml-32">
         <h1 className="text-80 font-bold bowlby-font text-white " style={{ textShadow: '8px 12px 2px rgba(0, 0, 0, 0.5)' }}>JUNKY URSAS</h1>

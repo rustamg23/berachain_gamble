@@ -20,7 +20,6 @@ import Main from './components/Main';
 
 
 function App() {
-  //feel reels Array with random symbols from import
   const reels = [ death_star, falcon, r2d2,at_at, c3po, darth_vader, stormtrooper, tie_ln, yoda];
 
   return (
