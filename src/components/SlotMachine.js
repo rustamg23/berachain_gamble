@@ -2,23 +2,30 @@ import React, { useRef, useEffect } from 'react';
 import Reel  from './Reel';
 import GameSwitcher from './GameSwitcher';
 // Импортируйте ваши изображения
-import a from './assets/symbols/a.svg';
-import b from './assets/symbols/b.svg';
-import c from './assets/symbols/c.svg';
-import d from './assets/symbols/d.svg';
-import e from './assets/symbols/e.svg';
-import f from './assets/symbols/f.svg';
-import g from './assets/symbols/g.svg';
+// import a from './assets/symbols/a.svg';
+// import b from './assets/symbols/b.svg';
+// import c from './assets/symbols/c.svg';
+// import d from './assets/symbols/d.svg';
+// import e from './assets/symbols/e.svg';
+// import f from './assets/symbols/f.svg';
+// import g from './assets/symbols/g.svg';
 // Продолжайте импортировать остальные изображения...
+
+import one from '../img/1.png';
+import two from '../img/2.png';
+import three from '../img/3.png';
+import four from '../img/4.png';
+import five from '../img/5.png';
+import six from '../img/6.png';
+import seven from '../img/7.png'
+
 
 const SlotMachine = () => {
 
 
 
   const reels = [
-    [a, b, c, d, e, f, g],
-    [a, b, c, d, e, f, g],
-    [a, b, c, d, e, f, g],
+    [one, two, three, four, five, six, seven],
   ];
 
   // Создаём массив ref для каждого Reel
@@ -34,7 +41,7 @@ const startAllSpins = () => {
 
   // Остановка начинается через 5 секунд + время задержки каждого барабана
   setTimeout(() => {
-    const combination = [1, 1, 1];
+    const combination = [1];
     combination.forEach((stopIndex, i) => {
       setTimeout(() => {
         reelRefs.current[i].current.stopAt(stopIndex);

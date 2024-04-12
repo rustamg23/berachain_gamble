@@ -49,13 +49,13 @@ function Main() {
           </a>
         </div>
       </div>
-    <div className="flex xl:flex-row flex-col justify-around items-center h-screen bg" style={{ backgroundImage: `url(${bg})` }}>
-      <div className="max-w-2xl text-left md:space-y-8  xl:-ml-32 mx-5 top-6 absolute md:relative xl:top-auto">
+    <div className="flex xl:flex-row flex-col justify-around items-center h-screen bg" >
+      <div className="max-w-2xl text-left md:space-y-8 space-y-3 xl:-ml-32 mx-5 top-6 absolute md:relative xl:top-auto">
         {/* <div className='flex items-center justify-between w-full'> */}
-          <h1 className="md:text-80 xs:text-5xl text-4xl font-bold bowlby-font text-white xl:mb-auto mb-8" style={{ textShadow: '8px 12px 2px rgba(0, 0, 0, 0.5)' }}>JUNKY URSAS</h1>
+          <h1 className="md:text-80 xs:text-5xl text-4xl font-bold bowlby-font text-white xl:mb-auto " style={{ textShadow: '8px 12px 2px rgba(0, 0, 0, 0.5)' }}>JUNKY URSAS</h1>
           
         {/* </div> */}
-        <p className='text-white poppins-font md:text-xl  text-base font-normal xl:w-9/10 w-full xl:mb-auto mb-8' style={{ textShadow: '3px 3px 2px rgba(0, 0, 0, 0.5)' }}>Junky Ursas is an exhilarating NFT project that brings together a collection of uniquely designed bear-themed digital art pieces, each one imbued with its own quirky personality and style. This inventive series not only celebrates the creativity and diversity.</p>
+        <p className='text-white poppins-font md:text-xl  text-sm font-normal xl:w-9/10 w-full xl:mb-auto ' style={{ textShadow: '3px 3px 2px rgba(0, 0, 0, 0.5)' }}>Junky Ursas is an exhilarating NFT project that brings together a collection of uniquely designed bear-themed digital art pieces, each one imbued with its own quirky personality and style. This inventive series not only celebrates the creativity and diversity.</p>
 
         <button className="poppins-font font-normal bg-red-500  text-white py-2 px-4 rounded-full w-full text-2xl hover:bg-red-600 hover:scale-105 ease-in-out duration-500">GO TO APP</button>
         
@@ -79,7 +79,7 @@ function Main() {
       </div>
       <div>
         <div className="absolute bottom-0 xl:right-32 xl:left-auto right-12 left-12 md:right-48 md:left-48">
-          <img src={bear} alt="Bear" className="w-full xl:h-80 h-50"  />
+          <img src={bear} alt="Bear" className="w-full xl:h-80 h-50 hidden sm:block"  />
         </div>
       </div>
       

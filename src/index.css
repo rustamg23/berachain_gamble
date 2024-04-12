@@ -35,6 +35,7 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
+    background-image: url("./img/bg.png");
   }
 }
 
@@ -43,6 +44,16 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-image: url("./img/bg.png");
+  }
+}
+
+@media (max-width: 450px) {
+  .bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./img/mob.png");
   }
 }
 
