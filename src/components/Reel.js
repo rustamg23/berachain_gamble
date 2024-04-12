@@ -18,10 +18,10 @@ function shuffleArray(array) {
   return array;
 }
 
-export const Reel = forwardRef(({ images }, ref) => {
+export const Reel = forwardRef(({ images, onStop }, ref) => {
   const controls = useAnimation();
   const [displayedImages, setDisplayedImages] = useState([]);
-
+  const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
     // Инициализация перемешанных изображений до начала вращения
     setDisplayedImages(shuffleArray(multiplyImages(images, 5)));
@@ -29,18 +29,31 @@ export const Reel = forwardRef(({ images }, ref) => {
 
   useImperativeHandle(ref, () => ({
     startSpin() {
+      setIsSpinning(true);
       // Перемешиваем изображения перед каждым началом вращения
-      const shuffledImages = shuffleArray(multiplyImages(images, 5));
+      const shuffledImages = shuffleArray(multiplyImages(images, 25));
       setDisplayedImages(shuffledImages); // Обновляем состояние с новым набором изображений для визуализации
 
       controls.start({
         y: [-50 * shuffledImages.length, 0], // Двигаемся на общую высоту всех изображений
         transition: {
-          duration: shuffledImages.length * 0.05, // Продолжительность анимации зависит от количества изображений
+          // duration: shuffledImages.length * 0.1, // Продолжительность анимации зависит от количества изображений
           ease: 'linear',
+          duration: 15,
+          loop: Infinity
         },
       });
     },
+    stopAt(index) {
+      controls.stop(); // Остановить текущую анимацию
+      controls.start({
+        y: [-50 * index], // Плавный переход к нужной позиции
+        transition: { duration: 0.5, ease: "linear" }
+      }).then(() => {
+        setIsSpinning(false);
+        if (onStop) onStop();
+      });
+    }
   }));
 
   

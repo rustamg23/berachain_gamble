@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Reel  from './Reel';
 import GameSwitcher from './GameSwitcher';
 // Импортируйте ваши изображения
@@ -9,30 +9,40 @@ import d from './assets/symbols/d.svg';
 import e from './assets/symbols/e.svg';
 import f from './assets/symbols/f.svg';
 import g from './assets/symbols/g.svg';
-import h from './assets/symbols/h.svg';
-import i from './assets/symbols/i.svg';
 // Продолжайте импортировать остальные изображения...
 
 const SlotMachine = () => {
+
+
+
   const reels = [
-    [a, b, c, d, e, f, g, h, i],
-    [a, b, c, d, e, f, g, h, i],
-    [a, b, c, d, e, f, g, h, i],
-    [a, b, c, d, e, f, g, h, i],
-    [a, b, c, d, e, f, g, h, i]
+    [a, b, c, d, e, f, g],
+    [a, b, c, d, e, f, g],
+    [a, b, c, d, e, f, g],
   ];
 
   // Создаём массив ref для каждого Reel
   const reelRefs = useRef(reels.map(() => React.createRef()));
 
-  const startAllSpins = () => {
-    reelRefs.current.forEach((ref, index) => {
-      // Добавляем небольшую задержку для каждого последующего барабана
+// Все барабаны начинают вращаться одновременно
+const startAllSpins = () => {
+  reelRefs.current.forEach((ref, index) => {
+    setTimeout(() => {
+      ref.current.startSpin();
+    }, index * 200);
+  });
+
+  // Остановка начинается через 5 секунд + время задержки каждого барабана
+  setTimeout(() => {
+    const combination = [1, 1, 1];
+    combination.forEach((stopIndex, i) => {
       setTimeout(() => {
-        ref.current.startSpin();
-      }, index * 200); // 500ms задержка для последующих барабанов
+        reelRefs.current[i].current.stopAt(stopIndex);
+      }, i * 1000 + 200 * i); // Учет начальной задержки вращения
     });
-  };
+  }, 5000);
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black ">

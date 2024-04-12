@@ -14,7 +14,7 @@ import r2d2 from './components/assets/symbols/f.svg';
 import stormtrooper from './components/assets/symbols/g.svg';
 import tie_ln from './components/assets/symbols/h.svg';
 import yoda from './components/assets/symbols/i.svg';
-
+import Main from './components/Main';
 
 
 
@@ -24,11 +24,11 @@ function App() {
   const reels = [ death_star, falcon, r2d2,at_at, c3po, darth_vader, stormtrooper, tie_ln, yoda];
 
   return (
-    <div className="App">
+    <div className="App ">
 
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/token" />} />
+          <Route path="/" element={<Main />} />
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>

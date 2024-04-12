@@ -2,6 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-cursor {
+  cursor: url('./img/joint.png'), auto;
+}
+
+a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+  cursor: url('./img/joint_.png'), auto;
+}
+.cursor-smoke {
+  position: fixed;
+  width: 20px;
+  height: 100px;
+  background: url('./img/smoke.png') no-repeat center center;
+  pointer-events: none; /* Игнорирует все события мыши, чтобы не мешать */
+  animation: smokeEffect 1s infinite;
+  transform: translate(-50%, -50%); /* Центрирует изображение относительно курсора */
+}
+
+@keyframes smokeEffect {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
+.bowlby-font {
+  font-family: "Bowlby One", sans-serif;
+  font-style: normal;
+}
+
+.poppins-font {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
