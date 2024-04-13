@@ -49,8 +49,8 @@ function Main() {
           </a>
         </div>
       </div> */}
-    <div className="flex xl:flex-row flex-col justify-around items-center h-screen bg " >
-      <div className="max-w-2xl text-left space-y-8 xl:-ml-32 mx-5 xl:relative xl:h-auto flex flex-col h-90p m-auto p-auto">
+    <div className="flex xl:flex-row flex-col justify-around items-center w-lvw h-lvh bg " >
+      <div className="max-w-2xl text-left space-y-8 xl:-ml-32 mx-5 xl:relative xl:h-auto flex flex-col h-90p m-auto p-auto ">
         {/* <div className='flex items-center justify-between w-full'> */}
           <h1 className="md:text-80 xs:text-5xl text-4xl font-bold bowlby-font text-white xl:mb-auto " style={{ textShadow: '8px 12px 2px rgba(0, 0, 0, 0.5)' }}>JUNKY URSAS</h1>
           
