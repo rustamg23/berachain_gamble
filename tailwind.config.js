@@ -17,8 +17,12 @@ module.exports = {
         '17': '17rem',
         '80': '80vh',
         '50': '50vh',
-        'reel': '150px',
-        'slot': '50px',
+        'reel-lg': '450px',
+        'reel-md': '240px',
+        'reel-sm': '150px',
+        'slot-lg': '150px',
+        'slot-md': '80px',
+        'slot-sm': '50px',
         '90p': '90%'
       },
       fontSize: {
@@ -28,7 +32,9 @@ module.exports = {
       width: {
         "4/5": "80%", 
         "9/10": "90%",
-        "slot": "50px"
+        'slot-lg': '150px',
+        'slot-md': '80px',
+        'slot-sm': '50px',
       }
     },
   },
