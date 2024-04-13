@@ -18,7 +18,8 @@ module.exports = {
         '80': '80vh',
         '50': '50vh',
         'reel': '150px',
-        'slot': '50px'
+        'slot': '50px',
+        '90p': '90%'
       },
       fontSize: {
         '100': '100px',
