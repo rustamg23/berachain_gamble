@@ -9,6 +9,7 @@
 a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   cursor: url('./img/joint_.png'), auto;
 }
+
 .cursor-smoke {
   position: fixed;
   width: 20px;
@@ -51,7 +52,7 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
 @media (max-width: 450px) {
   .bg {
     background-size: fit;
-    background-position: center;
+    background-position: bottom;
     background-repeat: repeat;
     background-image: url("./img/mob.png");
   }

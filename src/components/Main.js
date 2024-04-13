@@ -28,7 +28,7 @@ function Main() {
       />
       
     <div className="xl:flex xl:flex-row grid grid-rows-2 justify-around items-center w-svw h-lvh bg " >
-      <div className="max-w-2xl text-left space-y-8 xl:-ml-32 m-5 xl:relative xl:h-auto flex flex-col h-90p ">
+      <div className="max-w-2xl text-left xl:space-y-8 space-y-6 xl:-ml-32 m-5 xl:relative xl:h-auto flex flex-col h-90p ">
         <h1 className="md:text-80 xs:text-5xl text-4xl font-bold bowlby-font text-white xl:mb-auto " style={{ textShadow: '8px 12px 2px rgba(0, 0, 0, 0.5)' }}>JUNKY URSAS</h1>
         <p className='text-white poppins-font md:text-xl  text-sm font-normal xl:w-9/10 w-full xl:mb-auto ' style={{ textShadow: '3px 3px 2px rgba(0, 0, 0, 0.5)' }}>Junky Ursas is an exhilarating NFT project that brings together a collection of uniquely designed bear-themed digital art pieces, each one imbued with its own quirky personality and style. This inventive series not only celebrates the creativity and diversity.</p>
         <button className="poppins-font font-normal bg-red-500  text-white py-2 px-4 rounded-full xl:w-1/2 w-full text-2xl hover:bg-red-600 hover:scale-105 ease-in-out duration-500">GO TO APP</button>
