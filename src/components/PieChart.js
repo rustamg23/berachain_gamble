@@ -10,8 +10,8 @@ function PieChart({ data }) {
     svgElement.selectAll('*').remove(); // очистить все предыдущие элементы
 
     const svg = svgElement
-      .attr('width', 400)
-      .attr('height', 400)
+      .attr('width', 200)
+      .attr('height', 200)
       .append('g')
       .attr('transform', 'translate(100, 100)');
 
