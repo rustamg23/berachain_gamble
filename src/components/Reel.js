@@ -20,6 +20,8 @@ function shuffleArray(origin) {
 }
 
 export const Reel = forwardRef(({ images, onStop }, ref) => {
+  const [width, setWidth] = useState((window.innerWidth >= 640) ? 150 : 80);
+  console.log(width)
   const controls = useAnimation();
   const [displayedImages, setDisplayedImages] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -35,7 +37,11 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
       setDisplayedImages(shuffleArray(multiplyImages(images, 45))); // Обновляем состояние с новым набором изображений для визуализации
 
       controls.start({
+<<<<<<< Updated upstream
         y: [0, -50 * 315 ], // Двигаемся на общую высоту всех изображений
+=======
+        y: [0, -width * 315 ], // Двигаемся на общую высоту всех изображений
+>>>>>>> Stashed changes
         transition: {
           duration: 315  * 0.1, // Продолжительность анимации зависит от количества изображений
           ease: 'linear',
@@ -53,7 +59,11 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
       setDisplayedImages(finalImages);  // Обновляем изображения для показа
       
       // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
+<<<<<<< Updated upstream
       const imageHeight = 50; // Высота картинки
+=======
+      const imageHeight = width; // Высота картинки
+>>>>>>> Stashed changes
       const finalPosition = -imageHeight * 4; // Целевая картинка будет второй снизу в массиве из 5 картинок
       controls.stop(); // Остановить текущую анимацию
       controls.start({
@@ -72,7 +82,11 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   
 
   return (
+<<<<<<< Updated upstream
     <div className="relative overflow-hidden w-slot h-reel border-4 border-blue-500 rounded-lg shadow-neon">
+=======
+    <div className="relative overflow-hidden w-slot-md sm:w-slot-lg h-reel-md sm:h-reel-lg  rounded-lg ">
+>>>>>>> Stashed changes
       <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
           <img key={index} src={img} alt={`Symbol ${index}`} className="w-slot h-slot" />
