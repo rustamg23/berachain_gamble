@@ -10,7 +10,8 @@ const multiplyImages = (images, times) => {
   return result;
 };
 
-function shuffleArray(array) {
+function shuffleArray(origin) {
+  var array = [...origin]
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -24,14 +25,14 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
     // Инициализация перемешанных изображений до начала вращения
-    setDisplayedImages(multiplyImages(images, 45));
+    setDisplayedImages(shuffleArray(multiplyImages(images, 45)));
   }, [images]); // Перемешиваем и устанавливаем новый массив картинок при каждом изменении images
 
   useImperativeHandle(ref, () => ({
     startSpin() {
       setIsSpinning(true);
       // Перемешиваем изображения перед каждым началом вращения
-      setDisplayedImages(multiplyImages(images, 45)); // Обновляем состояние с новым набором изображений для визуализации
+      setDisplayedImages(shuffleArray(multiplyImages(images, 45))); // Обновляем состояние с новым набором изображений для визуализации
 
       controls.start({
         y: [0, -50 * 315 ], // Двигаемся на общую высоту всех изображений
@@ -46,29 +47,14 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
     stopAt(index) {
       
       // Подготовка массива изображений, включая только последние 5 для плавной остановки
-      const finalImages = [
-        images[3],  
-        images[3],  
-        images[index], 
-
-        images[3],  
-
-        images[3],  
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-        images[3], 
-      ];
+      var finalImages = shuffleArray(images)
+      finalImages[5] = images[index]  
+      console.log(finalImages)
       setDisplayedImages(finalImages);  // Обновляем изображения для показа
       
       // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
       const imageHeight = 50; // Высота картинки
-      const finalPosition = -imageHeight * 1; // Целевая картинка будет второй снизу в массиве из 5 картинок
+      const finalPosition = -imageHeight * 4; // Целевая картинка будет второй снизу в массиве из 5 картинок
       controls.stop(); // Остановить текущую анимацию
       controls.start({
         y: [0, finalPosition],
