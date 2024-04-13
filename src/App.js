@@ -15,6 +15,7 @@ import stormtrooper from './components/assets/symbols/g.svg';
 import tie_ln from './components/assets/symbols/h.svg';
 import yoda from './components/assets/symbols/i.svg';
 import Main from './components/Main';
+import Roulette from './components/Roulette';
 
 
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>
+          <Route path="/roulette" element={<Roulette />}/>
         </Routes>
       </BrowserRouter>
 
