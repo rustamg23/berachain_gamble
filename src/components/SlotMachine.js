@@ -1,15 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import Reel  from './Reel';
 import GameSwitcher from './GameSwitcher';
-// Импортируйте ваши изображения
-// import a from './assets/symbols/a.svg';
-// import b from './assets/symbols/b.svg';
-// import c from './assets/symbols/c.svg';
-// import d from './assets/symbols/d.svg';
-// import e from './assets/symbols/e.svg';
-// import f from './assets/symbols/f.svg';
-// import g from './assets/symbols/g.svg';
-// Продолжайте импортировать остальные изображения...
 
 import zero from '../img/0.png';
 import one from '../img/1.png';
