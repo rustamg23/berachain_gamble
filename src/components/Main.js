@@ -81,8 +81,12 @@ function Main() {
         <div className="absolute bottom-0 xl:right-32 xl:left-auto right-12 left-12 md:right-48 md:left-48">
           <img src={bear} alt="Bear" className="w-full xl:h-80 h-50 hidden sm:block"  />
         </div>
-        <div className="xl:hidden absolute bottom-5 left-0 right-0">
-          <div className='flex flex-row  w-full justify-between px-5'>
+        
+      </div>
+      
+    </div>
+    <div className="xl:hidden absolute bottom-5 left-0 right-0">
+          <div className='flex flex-row  w-full space-x-8 justify-center items-center px-5'>
 
             <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
               <img src={x} alt="X" className={iconSizeClassesMob}/>
@@ -101,9 +105,6 @@ function Main() {
           </div>
           
         </div>
-      </div>
-      
-    </div>
     </div>
   );
 }
