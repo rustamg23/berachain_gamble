@@ -48,6 +48,22 @@ function Main() {
             <img src={mirror} alt="Mirror" className={iconSizeClasses} />
           </a>
         </div>
+        <div className="flex xl:hidden flex-row w-full  justify-center items-center ">
+            <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
+              <img src={x} alt="X" className={iconSizeClassesMob}/>
+            </a>
+            <a href='https://discord.com/invite/junkyursas' target="_blank" rel="noopener noreferrer">
+              <img src={discord} alt="Discord" className={iconSizeClassesMob} />
+            </a>
+
+            <a href='https://junky-ursas-llc.gitbook.io/junky-ursas-smokumentaion' target="_blank" rel="noopener noreferrer"> 
+              <img src={gitbook} alt="Gitbook" className={iconSizeClassesMob} />
+            </a>
+
+            <a href='https://mirror.xyz/0x233404B1F7d0cB9533Abe1d17552Fd191FD56877' target="_blank" rel="noopener noreferrer">
+              <img src={mirror} alt="Mirror" className={iconSizeClassesMob} />
+            </a>
+        </div>
       </div>
       <div>
         <div className="absolute bottom-0 xl:right-32 xl:left-auto right-12 left-12 md:right-48 md:left-48">
@@ -57,7 +73,7 @@ function Main() {
         
       </div>
       <div className="xl:hidden mb-5">
-          <div className='flex flex-row w-full  justify-center items-center px-5'>
+          <div className='hidden flex flex-row w-full  justify-center items-center px-5'>
 
             <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
               <img src={x} alt="X" className={iconSizeClassesMob}/>
