@@ -31,7 +31,7 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 640px) {
   .bg {
     background-size: 100% 100%;
     background-position: center;
@@ -40,7 +40,7 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 639px) {
   .bg {
     background-size: cover;
     background-position: center;
