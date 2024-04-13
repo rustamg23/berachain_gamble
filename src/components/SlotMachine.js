@@ -11,6 +11,7 @@ import GameSwitcher from './GameSwitcher';
 // import g from './assets/symbols/g.svg';
 // Продолжайте импортировать остальные изображения...
 
+import zero from '../img/0.png';
 import one from '../img/1.png';
 import two from '../img/2.png';
 import three from '../img/3.png';
@@ -25,7 +26,9 @@ const SlotMachine = () => {
 
 
   const reels = [
-    [one, two, three, four, five, six, seven],
+    [zero, one, two, three, four, five, six],
+    [zero, one, two, three, four, five, six],
+    [zero, one, two, three, four, five, six],
   ];
 
   // Создаём массив ref для каждого Reel
@@ -41,13 +44,13 @@ const startAllSpins = () => {
 
   // Остановка начинается через 5 секунд + время задержки каждого барабана
   setTimeout(() => {
-    const combination = [1];
+    const combination = [1, 2 ,3];
     combination.forEach((stopIndex, i) => {
       setTimeout(() => {
         reelRefs.current[i].current.stopAt(stopIndex);
-      }, i * 1000 + 200 * i); // Учет начальной задержки вращения
+      }, i * 1000); // Учет начальной задержки вращения
     });
-  }, 5000);
+  }, 2000);
 };
 
 

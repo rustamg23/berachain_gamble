@@ -24,31 +24,58 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
     // Инициализация перемешанных изображений до начала вращения
-    setDisplayedImages(shuffleArray(multiplyImages(images, 5)));
+    setDisplayedImages(multiplyImages(images, 45));
   }, [images]); // Перемешиваем и устанавливаем новый массив картинок при каждом изменении images
 
   useImperativeHandle(ref, () => ({
     startSpin() {
       setIsSpinning(true);
       // Перемешиваем изображения перед каждым началом вращения
-      const shuffledImages = shuffleArray(multiplyImages(images, 25));
-      setDisplayedImages(shuffledImages); // Обновляем состояние с новым набором изображений для визуализации
+      setDisplayedImages(multiplyImages(images, 45)); // Обновляем состояние с новым набором изображений для визуализации
 
       controls.start({
-        y: [-50 * shuffledImages.length, 0], // Двигаемся на общую высоту всех изображений
+        y: [0, -50 * 315 ], // Двигаемся на общую высоту всех изображений
         transition: {
-          // duration: shuffledImages.length * 0.1, // Продолжительность анимации зависит от количества изображений
+          duration: 315  * 0.1, // Продолжительность анимации зависит от количества изображений
           ease: 'linear',
-          duration: 15,
+          // duration: 25,
           loop: Infinity
         },
       });
     },
     stopAt(index) {
+      
+      // Подготовка массива изображений, включая только последние 5 для плавной остановки
+      const finalImages = [
+        images[3],  
+        images[3],  
+        images[index], 
+
+        images[3],  
+
+        images[3],  
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+        images[3], 
+      ];
+      setDisplayedImages(finalImages);  // Обновляем изображения для показа
+      
+      // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
+      const imageHeight = 50; // Высота картинки
+      const finalPosition = -imageHeight * 1; // Целевая картинка будет второй снизу в массиве из 5 картинок
       controls.stop(); // Остановить текущую анимацию
       controls.start({
-        y: [-50 * index], // Плавный переход к нужной позиции
-        transition: { duration: 0.5, ease: "linear" }
+        y: [0, finalPosition],
+        transition: {
+          duration: 0.75, // Плавное замедление
+          ease: "easeOut"
+        }
       }).then(() => {
         setIsSpinning(false);
         if (onStop) onStop();
@@ -59,10 +86,10 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   
 
   return (
-    <div className="relative overflow-hidden sm:w-24 sm:h-17 h-14 border-4 border-blue-500 rounded-lg shadow-neon">
+    <div className="relative overflow-hidden w-slot h-reel border-4 border-blue-500 rounded-lg shadow-neon">
       <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
-          <img key={index} src={img} alt={`Symbol ${index}`} className="w-full object-cover" />
+          <img key={index} src={img} alt={`Symbol ${index}`} className="w-slot h-slot" />
         ))}
       </motion.div>
     </div>
