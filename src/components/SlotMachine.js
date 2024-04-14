@@ -121,7 +121,8 @@
         <GameSwitcherWithTopBar />
         <div className="flex flex-row flex-1 content lg:ml-240 mobile-content"> 
           <div className="w-240 bg-gray-800 text-white p-4 rounded-lg wager-controls "> 
-            <div className="bet-input space-y-8 text-left">
+            <div className="bet-input space-y-6 text-left">
+              <div>
               <p className='text-lg'>Wager</p>
               <input
                 type="number"
@@ -130,6 +131,8 @@
                 placeholder="Enter wager"
                 className="bg-gray-700 p-2 rounded"
               />
+              </div>
+              <div>
               <p className='text-lg'>Bets</p>
               <input
                 type="number"
@@ -138,6 +141,8 @@
                 placeholder="Enter bets count"
                 className="bg-gray-700 p-2 rounded"
               />
+              </div>
+              
               <p className='text-md'>Total wager: {wager * bets} $BERA</p>
               <p className='text-md'>Remaining bets: {bets}</p>
               <p className='text-md'>Total balance: {balance} $BERA</p>
@@ -165,11 +170,11 @@
                <button onClick={handleToggleTable} ref={setButtonRef} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-32">
                 {showTable ? 'Hide Table' : 'Show Table'}
               </button>
-             <div className="flex space-x-2">
+             {/* <div className="flex space-x-2">
                <img className="w-slot-md h-slot-md" src={future[0]} />
                <img className="w-slot-md h-slot-md" src={future[1]} />
                <img className="w-slot-md h-slot-md" src={future[2]} />
-             </div> 
+             </div>  */}
             <div className="p-4">
               <HistoryToggle columns={columns} data={spinHistory} amount={6}/>
             </div>

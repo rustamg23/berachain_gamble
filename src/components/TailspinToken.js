@@ -89,41 +89,45 @@ export default function TailspinNFT() {
     <div className={`min-h-screen flex flex-col  ${casinoBackground} text-white `}>
       <GameSwitcherWithTopBar/>
       <div className="flex flex-row flex-1 content lg:ml-240 mobile-content"> 
-      <div className="w-240 bg-gray-800 text-white p-4 rounded-lg wager-controls">
-        <div className="flex flex-col space-y-8">
-          <p className='text-lg'>Wager</p>
-          <input
-            id="wager"
-            type="number"
-            min="0"
-            max={balance}
-            value={wager_}
-            onChange={handleBetAmountChange}
-            className="w-full p-2 border rounded-md text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter wager"
-          />
+      <div className="w-240 bg-gray-800 text-white p-4 rounded-lg wager-controls text-left space-y-6">
+          <div>
+            <p className='text-lg'>Wager</p>
+            <input
+              id="wager"
+              type="number"
+              min="0"
+              max={balance}
+              value={wager_}
+              onChange={handleBetAmountChange}
+              className="bg-gray-700 p-2 rounded w-full"
+              placeholder="Enter wager"
+            />
           </div>
-    
-          <p className='text-lg'>Bets</p>
-          <input
-            id="bets"
-            type="number"
-            min="1"
-            value={bets}
-            onChange={(e) => setBets(e.target.value)}
-            className="w-full p-2 border rounded-md text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter bets count"
-          />
-          <p className='text-lg'>Chance</p>
-          <input
-          id="range"
-          type="range"
-          min="1"
-          max="75"
-          value={sliderValue}
-          onChange={handleSliderChange}
-          className="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer bg-black"
-        />
+          <div>
+            <p className='text-lg'>Bets</p>
+            <input
+              id="bets"
+              type="number"
+              min="1"
+              value={bets}
+              onChange={(e) => setBets(e.target.value)}
+              className="bg-gray-700 p-2 rounded w-full"
+              placeholder="Enter bets count"
+            />
+          </div>
+          <div>
+            <p className='text-lg'>Chance</p>
+              <input
+              id="range"
+              type="range"
+              min="1"
+              max="75"
+              value={sliderValue}
+              onChange={handleSliderChange}
+              className="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer bg-black"
+            />
+          </div>
+          
           <p className='text-md'>Win Chance: {sliderValue}%</p>
           <p className='text-md'>Win Payout: {(wager_ * 100 / sliderValue).toFixed(2)} $BERA</p>
           <p className='text-md'>Total wager: {wager_ * bets} $BERA</p>
