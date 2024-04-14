@@ -26,6 +26,17 @@ export const beargain = beargain_
 export const beraflip = beraflip_
 export const slots = slots_
 
+
+ export const breel = {
+    '0': bitbera, 
+    '1': bandbera,
+    '2': bongbera, 
+    '3': babybera, 
+    '4': yeetbera, 
+    '5': hungrybera,
+    '6':remilio
+  }
+
 export const multiplierTable = {
     '0,0,0': 100,
     '1,1,1': 45,
@@ -40,17 +51,10 @@ export const multiplierTable = {
     '5,x,~': 2
   };
   
-  export const breel = {
-    '0': bitbera, 
-    '1': bandbera,
-    '2': bongbera, 
-    '3': babybera, 
-    '4': yeetbera, 
-    '5': hungrybera,
-    '6':remilio
-  }
+ 
 
 export function calculateMultiplier(combination) {
+  console.log(combination, 'combination mul');
     const combinationKey = combination.join(',');
     if (multiplierTable.hasOwnProperty(combinationKey)) {
       return multiplierTable[combinationKey];

@@ -40,7 +40,7 @@ const CustomTable = ({ columns, data, amount }) => {
           {data.map((row, rowIndex) => (
             <div key={rowIndex} className={`text-white grid  px-4 py-2 border-t border-gray-600`} style={{gridTemplateColumns: `repeat(${amount}, minmax(0, 1fr))`}}>
               {columns.map((column, colIndex) => (
-                <div key={colIndex}>{row[column.accessor]}</div>
+                <div key={colIndex} className={row["payout"] > 0 ? "text-green-500" : "text-red-500"}>{row[column.accessor]}</div>
               ))}
             </div>
           ))}

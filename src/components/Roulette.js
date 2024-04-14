@@ -9,7 +9,7 @@ function Game() {
     const colors = ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF"]; 
 
     const chartData = useMemo(() => players.map(player => ({
-        value: player.share, // Преобразуем долю в проценты
+        value: player.share, 
         color: player.color,
         name: player.name
     })), [players]);
@@ -25,7 +25,7 @@ function Game() {
         share: (newBet / newTotalPool * 100).toFixed(2)
       };
   
-      // Обновление долей существующих игроков
+
       const updatedPlayers = players.map(player => ({
         ...player,
         share: (player.bet / newTotalPool * 100).toFixed(2)
@@ -42,10 +42,10 @@ function Game() {
   
     return (
       <div className="flex h-screen">
-        <div className="flex-1 bg-gray-100  m-auto"> {/* Левая часть для игры */}
+        <div className="flex-1 bg-gray-100  m-auto"> 
             <PieChart data={chartData} className="w-64 h-64 justify-center items-center" />;
         </div>
-        <div className="flex-1 p-4"> {/* Правая часть для формы и списка */}
+        <div className="flex-1 p-4">
           <div className="flex flex-col items-center">
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Name" className="input input-bordered w-full max-w-xs" />
             <input type="number" value={bet} onChange={e => setBet(e.target.value)} placeholder="Bet amount" className="input input-bordered w-full max-w-xs mt-2" />
