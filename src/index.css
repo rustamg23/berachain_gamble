@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-cursor {
+body {
   cursor: url('./img/joint.png'), auto;
 }
 
-a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+a:hover, button:hover, input[type="submit"]:hover, input[type="number"]:hover, input[type="button"]:hover {
   cursor: url('./img/joint_.png'), auto;
 }
 
@@ -19,6 +19,32 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   animation: smokeEffect 1s infinite;
   transform: translate(-50%, -50%); /* Центрирует изображение относительно курсора */
 }
+
+@media screen and (max-width: 1023px) {
+  .sidebar {
+    margin-top: 50px;
+  }
+  .content {
+    margin-top: 70px;
+    flex-direction: column-reverse; /* Меняем порядок столбцов */
+  }
+  .wager-controls {
+    width: 100%; /* Занимает всю ширину */
+    margin-top: 20px; /* Добавление отступа сверху */
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .sidebar {
+    margin-top: 60px;
+  }
+  .content {
+    margin-top: 70px;
+    margin-left: 250px; /* немного больше отступа от сайдбара */
+    padding: 10px; /* Добавление внутренних отступов для дополнительного пространства */
+  }
+}
+
 
 @keyframes smokeEffect {
   from {
@@ -82,29 +108,4 @@ code {
     monospace;
 }
 
-.reel-container {
-  position: relative;
-  overflow: hidden;
-  width: 150px; /* или используйте классы Tailwind для размеров */
-  height: 150px; /* или используйте классы Tailwind для размеров */
-  margin: auto; /* чтобы центрировать контейнер, если нужно */
-}
 
-.reel-container::before,
-.reel-container::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 10%; /* Высота затемненного эффекта */
-  background: rgba(0, 0, 0, 1); /* Цвет затемнения */
-  z-index: 10;
-}
-
-.reel-container::before {
-  top: 0;
-}
-
-.reel-container::after {
-  bottom: 0;
-}

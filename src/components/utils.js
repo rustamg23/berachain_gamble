@@ -16,7 +16,15 @@ import remilio from "./beras/remilio.webp"
 import yeetbera from "./beras/yeetbera.webp" 
 import bitbera from "./beras/bitbear.webp" 
 
+import beargain_ from "../img/beargain.png"
+import beraflip_ from "../img/beraflip.png"
+import slots_ from "../img/slots.png"
+
 import { useState, useEffect } from 'react';
+
+export const beargain = beargain_
+export const beraflip = beraflip_
+export const slots = slots_
 
 export const multiplierTable = {
     '0,0,0': 100,
@@ -28,8 +36,20 @@ export const multiplierTable = {
     '4,4,4': 10,
     '4,4,1': 10,
     '5,5,5': 5,
+    '5,5,-': 3,
+    '5,-,-': 2
   };
   
+  export const breel = {
+    '0': bitbera, 
+    '1': bandbera,
+    '2': bongbera, 
+    '3': babybera, 
+    '4': yeetbera, 
+    '5': hungrybera,
+    '6':remilio
+  }
+
 export function calculateMultiplier(combination) {
     const combinationKey = combination.join(',');
     if (multiplierTable.hasOwnProperty(combinationKey)) {

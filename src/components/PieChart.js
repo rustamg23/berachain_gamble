@@ -7,8 +7,7 @@ function PieChart({ data }) {
 
   useEffect(() => {
     const svgElement = d3.select(ref.current);
-    svgElement.selectAll('*').remove(); // очистить все предыдущие элементы
-
+    svgElement.selectAll('*').remove();
     const svg = svgElement
       .attr('width', 200)
       .attr('height', 200)
@@ -41,7 +40,7 @@ function PieChart({ data }) {
           .attr('stroke', 'none');
       });
 
-    console.log(arcs); // For debugging
+    console.log(arcs); 
   }, [data]);
 
   return (

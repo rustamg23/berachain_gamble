@@ -10,49 +10,46 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   const [displayedImages, setDisplayedImages] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
-    // Инициализация перемешанных изображений до начала вращения
+
     setDisplayedImages(shuffleArray(multiplyImages(images, 45)));
-  }, [images]); // Перемешиваем и устанавливаем новый массив картинок при каждом изменении images
+  }, [images]); 
 
   useImperativeHandle(ref, () => ({
     startSpin() {
+      console.log("Starting spin...");
       setIsSpinning(true);
-      // Перемешиваем изображения перед каждым началом вращения
-      setDisplayedImages(shuffleArray(multiplyImages(images, 45))); // Обновляем состояние с новым набором изображений для визуализации
-
+      setDisplayedImages(shuffleArray(multiplyImages(images, 45)));
       controls.start({
-        y: [0, -width * 315 ], // Двигаемся на общую высоту всех изображений
+        y: [0, -width * 315],
         transition: {
-          duration: 315  * 0.1, // Продолжительность анимации зависит от количества изображений
+          duration: 31.5, 
           ease: 'linear',
-          // duration: 25,
           loop: Infinity
         },
       });
     },
-    stopAt(index) {
+    stopAt(index, callback) {
+      console.log("Stopping at index:", index);
+      var finalImages = shuffleArray(images);
+      finalImages[5] = images[index];
+      setDisplayedImages(finalImages);
       
-      // Подготовка массива изображений, включая только последние 5 для плавной остановки
-      var finalImages = shuffleArray(images)
-      finalImages[5] = images[index]  
-      setDisplayedImages(finalImages);  // Обновляем изображения для показа
-      
-      // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
-      const imageHeight = width; // Высота картинки
-      const finalPosition = -imageHeight * 4; // Целевая картинка будет второй снизу в массиве из 5 картинок
-      controls.stop(); // Остановить текущую анимацию
+      const finalPosition = -width * 4;
+      controls.stop();
       controls.start({
         y: [0, finalPosition],
         transition: {
-          duration: 0.75, // Плавное замедление
+          duration: 0.75,
           ease: "easeOut"
         }
       }).then(() => {
+        console.log("Animation complete, stopping spin...");
         setIsSpinning(false);
-        if (onStop) onStop();
-      });
+        if (callback) callback();
+      }).catch(error => console.error("Error during stop animation:", error));
     }
-  }));
+}));
+
 
   
 
