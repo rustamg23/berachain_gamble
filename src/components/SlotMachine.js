@@ -4,6 +4,7 @@ import GameSwitcher from './GameSwitcher';
 import { reels, breels, multiplierTable, calculateMultiplier } from './utils';
 import bondbera from "./beras/bondbera.webp"
 
+
 const SlotMachine = () => {
 
   const [bet, setBet] = useState('');

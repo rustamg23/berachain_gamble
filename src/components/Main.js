@@ -6,7 +6,7 @@ import mirror from '../img/mirror.png';
 import x from '../img/x.png';
 import gitbook from '../img/gitbook.png';
 import { useState } from 'react';
-import { Analytics } from '@vercel/analytics/react';
+
 
 function Main() {
   const iconSizeClasses = "h-18 w-18 opacity-75 hover:opacity-100 hover:scale-110 ease-in-out duration-500";
@@ -93,7 +93,7 @@ function Main() {
           
         </div>
     </div>
-    <Analytics/>
+    
     </div>
   );
 }
