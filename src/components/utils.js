@@ -37,7 +37,7 @@ export const multiplierTable = {
     '4,4,1': 10,
     '5,5,5': 5,
     '5,5,-': 3,
-    '5,-,-': 2
+    '5,x,~': 2
   };
   
   export const breel = {

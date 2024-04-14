@@ -3,7 +3,7 @@
   import GameSwitcherWithTopBar from './GameSwitcher';
   import { breel, breels, multiplierTable, calculateMultiplier } from './utils';
   import bondbera from "./beras/bondbera.webp"
-  import CustomTable from './CustomTable';
+  import HistoryToggle from './CustomTable';
   import {MultiplierTableModal} from './MultiplierTable'
 
 
@@ -126,7 +126,7 @@
               <p className='text-md'>Balance change: {pnl} $BERA</p>
 
               <button
-                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 font-bold rounded"
+                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 font-bold rounded w-32"
                 onClick={() => gamble(bets)}
                 disabled={!wager || balance - wager * bets < 0}
               >
@@ -140,19 +140,20 @@
                 <Reel key={index} images={images} ref={reelRefs.current[index]} />
               ))}
             </div>
-            {showTable && (
-              <MultiplierTableModal multipliers={multiplierTable} images={breel} onClose={handleToggleTable}/>
-            )}
-             <button onClick={handleToggleTable} ref={setButtonRef} className="bg-white text-black px-4 py-2">
-              {showTable ? 'Hide Table' : 'Show Table'}
-            </button>
-            {/* <div className="flex space-x-2">
-              <img className="w-slot-md h-slot-md" src={future[0]} />
-              <img className="w-slot-md h-slot-md" src={future[1]} />
-              <img className="w-slot-md h-slot-md" src={future[2]} />
-            </div> */}
+
+              {showTable && (
+                <MultiplierTableModal multipliers={multiplierTable} images={breel} onClose={handleToggleTable}/>
+              )}
+               <button onClick={handleToggleTable} ref={setButtonRef} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-32">
+                {showTable ? 'Hide Table' : 'Show Table'}
+              </button>
+            {/* // <div className="flex space-x-2">
+            //   <img className="w-slot-md h-slot-md" src={future[0]} />
+            //   <img className="w-slot-md h-slot-md" src={future[1]} />
+            //   <img className="w-slot-md h-slot-md" src={future[2]} />
+            // </div>  */}
             <div className="p-4">
-              <CustomTable columns={columns} data={spinHistory} amount={6}/>
+              <HistoryToggle columns={columns} data={spinHistory} amount={6}/>
             </div>
           </div>
         </div>

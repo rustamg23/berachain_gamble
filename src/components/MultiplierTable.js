@@ -1,5 +1,20 @@
 import React from 'react';
 
+export const LegendButton = ({multiplierTable, breel, setButtonRef, showTable, handleToggleTable}) => {
+    
+    console.log( showTable, handleToggleTable)
+    return (
+        <>
+        {showTable && (
+            <MultiplierTableModal multipliers={multiplierTable} images={breel} onClose={handleToggleTable}/>
+          )}
+           <button onClick={handleToggleTable} ref={setButtonRef} className="bg-white text-black px-4 py-2">
+            {showTable ? 'Hide Table' : 'Show Table'}
+          </button>
+        </>
+    )
+}
+
 
 export const MultiplierTableModal = ({ multipliers, images, position, onClose }) => {
     const style = {
@@ -24,7 +39,7 @@ export const MultiplierTable = ({ multipliers, images }) => {
         <td>
           {imageKeys.map(key => (
             <img
-              key={key}
+              key={Math.floor(Math.random() * 3000)}
               src={images[key]}
               alt=""
               className="inline-block h-10 w-10 mr-1" 
