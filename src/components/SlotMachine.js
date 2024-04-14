@@ -10,7 +10,7 @@
   const SlotMachine = () => {
     const [wager, setWager] = useState('');
     const [bets, setBets] = useState(1);
-    const [balance, setBalance] = useState(10000);
+    const [balance, setBalance] = useState(100000);
     const [pnl, setPnl] = useState(0);
     const [future, setFuture] = useState([bondbera, bondbera, bondbera])
     const [spinHistory, setSpinHistory] = useState([{ wager: null, multiplier: null, payout: null, combination: null, time: null, player:null }]);
@@ -65,20 +65,23 @@
           console.log("All reels stopped.");
           const winMultiplier = calculateMultiplier(combination);
           const winAmount = winMultiplier * wager;
-          const newBalance = balance + winAmount;
-          setBalance(newBalance);
-          setPnl(newBalance - 10000);
-          const newSpinRecord = {
-            player: 'You',
-            time: new Date().toLocaleTimeString(),
-            wager: wager,
-            multiplier: winMultiplier,
-            payout: winAmount,
-            combination: combination.join(", ")
-          };
-          setSpinHistory([newSpinRecord, ...spinHistory]);
+          // const newBalance = balance + winAmount;
+          setBalance(prebBalance => prebBalance+winAmount - wager);
+          setPnl(prevPnl => prevPnl + winAmount - wager);
+          setBets(prevBets=> prevBets-1);
+          setSpinHistory(prevHistory => [
+            ...prevHistory,
+            {
+              player: 'You',
+              time: new Date().toISOString(),
+              wager: wager,
+              multiplier: winMultiplier,
+              payout: winAmount == 0 ? -wager : winAmount,
+              combination: combination.join(", ")
+            }
+          ]);
           console.log("Spin complete. Resolving promise.");
-
+          console.log(spinHistory)
           resolve();
         }).catch(error => console.error("Error completing spin:", error));
       }, 2000);
@@ -90,8 +93,6 @@
   const gamble = async (numberOfSpins) => {
     for (let i = 0; i < numberOfSpins; i++) {
       await startAllSpins(); 
-      setBets(numberOfSpins-1)
-      console.log(i, "i")
     }
   };
 

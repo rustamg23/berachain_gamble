@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { breels } from './utils';
 
 const CustomTable = ({ columns, data, amount }) => {
-    
+
   return (
     <div className="overflow-hidden">
       <div className="inline-block min-w-full">
