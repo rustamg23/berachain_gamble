@@ -20,7 +20,7 @@ const GameSwitcher = () => {
           <a href='/roulette' className="bg-gray-700 p-2 rounded">Roulette</a>
         </div>
       </div>
-      <div onClick={toggleMenu} className="sm:hidden flex-1 p-10 text-2xl font-bold absolute top-0 right-0 z-50 text-white">
+      <div onClick={toggleMenu} className="lg:hidden flex-1 p-10 text-2xl font-bold absolute top-0 right-0 z-50 text-white">
         {"☰"}
       </div>
     </div>

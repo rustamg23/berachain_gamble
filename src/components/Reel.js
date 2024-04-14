@@ -1,27 +1,11 @@
 // Reel.js
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { multiplyImages, shuffleArray, } from './utils';
 
-const multiplyImages = (images, times) => {
-  let result = [];
-  for (let i = 0; i < times; i++) {
-    result = result.concat(images);
-  }
-  return result;
-};
-
-function shuffleArray(origin) {
-  var array = [...origin]
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
 
 export const Reel = forwardRef(({ images, onStop }, ref) => {
   const [width, setWidth] = useState((window.innerWidth >= 640) ? 150 : 80);
-  console.log(width)
   const controls = useAnimation();
   const [displayedImages, setDisplayedImages] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -51,7 +35,6 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
       // Подготовка массива изображений, включая только последние 5 для плавной остановки
       var finalImages = shuffleArray(images)
       finalImages[5] = images[index]  
-      console.log(finalImages)
       setDisplayedImages(finalImages);  // Обновляем изображения для показа
       
       // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
@@ -74,10 +57,10 @@ export const Reel = forwardRef(({ images, onStop }, ref) => {
   
 
   return (
-    <div className="relative overflow-hidden w-slot-md sm:w-slot-lg h-reel-md sm:h-reel-lg  rounded-lg ">
+    <div className=" relative overflow-hidden w-slot-md sm:w-slot-lg h-reel-md sm:h-reel-lg rounded-lg ">
       <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
-          <img key={index} src={img} alt={`Symbol ${index}`} className="w-slot h-slot" />
+          <img key={index} src={img} alt={`Symbol ${index}`} className="sm:w-slot-lg w-slot-md sm:h-slot-lg h-slot-md" />
         ))}
       </motion.div>
     </div>

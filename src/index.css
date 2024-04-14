@@ -81,3 +81,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.reel-container {
+  position: relative;
+  overflow: hidden;
+  width: 150px; /* или используйте классы Tailwind для размеров */
+  height: 150px; /* или используйте классы Tailwind для размеров */
+  margin: auto; /* чтобы центрировать контейнер, если нужно */
+}
+
+.reel-container::before,
+.reel-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10%; /* Высота затемненного эффекта */
+  background: rgba(0, 0, 0, 1); /* Цвет затемнения */
+  z-index: 10;
+}
+
+.reel-container::before {
+  top: 0;
+}
+
+.reel-container::after {
+  bottom: 0;
+}
