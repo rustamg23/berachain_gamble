@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-cursor {
+body {
   cursor: url('./img/joint.png'), auto;
 }
 
-a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+a:hover, button:hover, input[type="submit"]:hover, input[type="number"]:hover, input[type="button"]:hover {
   cursor: url('./img/joint_.png'), auto;
 }
 
@@ -19,6 +19,32 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   animation: smokeEffect 1s infinite;
   transform: translate(-50%, -50%); /* Центрирует изображение относительно курсора */
 }
+
+@media screen and (max-width: 1023px) {
+  .sidebar {
+    margin-top: 50px;
+  }
+  .content {
+    margin-top: 60px;
+    flex-direction: column-reverse; /* Меняем порядок столбцов */
+  }
+  .wager-controls {
+    width: 100%; /* Занимает всю ширину */
+    margin-top: 20px; /* Добавление отступа сверху */
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .sidebar {
+    margin-top: 60px;
+  }
+  .content {
+    margin-top: 60px;
+    margin-left: 250px; /* немного больше отступа от сайдбара */
+    padding: 10px; /* Добавление внутренних отступов для дополнительного пространства */
+  }
+}
+
 
 @keyframes smokeEffect {
   from {
@@ -80,4 +106,20 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  transition: top 0.3s ease, left 0.3s ease; /* Плавное изменение позиции */
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  pointer-events: none; /* Убедитесь, что тултип не мешает взаимодействию с другими элементами */
+  opacity: 0;
+  visibility: hidden;
+}
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
 }

@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
 import bera from '../img/bera.png';
-import GameSwitcher from './GameSwitcher';
+import GameSwitcherWithTopBar from './GameSwitcher';
 
 export default function TailspinNFT() {
     const [sliderValue, setSliderValue] = useState(1);
-    const [balance, setBalance] = useState(10000); // Начальный баланс пользователя
+    const [balance, setBalance] = useState(10000); 
     const [isWinner, setIsWinner] = useState(null);
     const [rotateClass, setRotateClass] = useState('');
-    const priceValue = 100; // Цена токена
-    const [totalGames, setTotalGames] = useState(0); // Всего игр
-    const [totalWins, setTotalWins] = useState(0); // Всего побед
+    const priceValue = 100; 
+    const [totalGames, setTotalGames] = useState(0); 
+    const [totalWins, setTotalWins] = useState(0);
 
     const handleBet = () => {
-        setTotalGames(totalGames + 1); // Увеличиваем счетчик игр
+        setTotalGames(totalGames + 1); 
         const randomNumber = Math.ceil(Math.random() * 100);
         const didWin = randomNumber <= sliderValue;
         setIsWinner(didWin);
 
-        const betAmount = sliderValue / 100 * priceValue; // Ставка в монетах
+        const betAmount = sliderValue / 100 * priceValue; 
 
         if (didWin) {
             setRotateClass('animate-spin');
             setTimeout(() => setRotateClass(''), 1000);
-            setBalance(balance + 100); // Увеличиваем баланс при выигрыше
-            setTotalWins(totalWins + 1); // Увеличиваем счетчик побед
+            setBalance(balance + 100); 
+            setTotalWins(totalWins + 1); 
         } else {
-            setBalance(balance - betAmount); // Уменьшаем баланс при проигрыше
+            setBalance(balance - betAmount); 
         }
     };
 
     return (
         <div className={`min-h-screen bg-orange-700 flex flex-col items-center justify-center text-white py-8`}>
-            <GameSwitcher />
+            <GameSwitcherWithTopBar />
             <div className="flex flex-col items-center justify-center space-y-5 w-full max-w-lg">
                 <div className={`${rotateClass} w-full flex justify-center`}>
                     <img src={bera} alt="Descriptive Alt Text" className="mb-4 w-48 h-48 object-cover" />

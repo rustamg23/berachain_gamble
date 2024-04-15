@@ -6,6 +6,10 @@ module.exports = {
   theme: {
 
     extend: {
+      spacing: {
+        '240': '240px', // Для сайдбара
+        '60': '60px', // Для топбара
+      },
       boxShadow: {
         'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.5)', // Пример текстовой тени
       },
@@ -23,7 +27,9 @@ module.exports = {
         'slot-lg': '150px',
         'slot-md': '80px',
         'slot-sm': '50px',
-        '90p': '90%'
+        '90p': '90%',
+        'topbar-desktop': '60px', 
+        'topbar-mobile': '50px',
       },
       fontSize: {
         '100': '100px',
@@ -35,6 +41,8 @@ module.exports = {
         'slot-lg': '150px',
         'slot-md': '80px',
         'slot-sm': '50px',
+        'sidebar-desktop': '240px', 
+        'sidebar-mobile': '200px'
       }
     },
   },

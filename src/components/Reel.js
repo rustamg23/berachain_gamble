@@ -1,81 +1,63 @@
 // Reel.js
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { multiplyImages, shuffleArray, } from './utils';
 
-const multiplyImages = (images, times) => {
-  let result = [];
-  for (let i = 0; i < times; i++) {
-    result = result.concat(images);
-  }
-  return result;
-};
-
-function shuffleArray(origin) {
-  var array = [...origin]
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
 
 export const Reel = forwardRef(({ images, onStop }, ref) => {
+  const [width, setWidth] = useState((window.innerWidth >= 640) ? 150 : 80);
   const controls = useAnimation();
   const [displayedImages, setDisplayedImages] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
-    // Инициализация перемешанных изображений до начала вращения
+
     setDisplayedImages(shuffleArray(multiplyImages(images, 45)));
-  }, [images]); // Перемешиваем и устанавливаем новый массив картинок при каждом изменении images
+  }, [images]); 
 
   useImperativeHandle(ref, () => ({
     startSpin() {
+      console.log("Starting spin...");
       setIsSpinning(true);
-      // Перемешиваем изображения перед каждым началом вращения
-      setDisplayedImages(shuffleArray(multiplyImages(images, 45))); // Обновляем состояние с новым набором изображений для визуализации
-
+      setDisplayedImages(shuffleArray(multiplyImages(images, 45)));
       controls.start({
-        y: [0, -150 * 315 ], // Двигаемся на общую высоту всех изображений
+        y: [0, -width * 315],
         transition: {
-          duration: 315  * 0.1, // Продолжительность анимации зависит от количества изображений
+          duration: 31.5, 
           ease: 'linear',
-          // duration: 25,
           loop: Infinity
         },
       });
     },
-    stopAt(index) {
+    stopAt(index, callback) {
+      console.log("Stopping at index:", index);
+      var finalImages = shuffleArray(images);
+      finalImages[5] = images[index];
+      setDisplayedImages(finalImages);
       
-      // Подготовка массива изображений, включая только последние 5 для плавной остановки
-      var finalImages = shuffleArray(images)
-      finalImages[5] = images[index]  
-      console.log(finalImages)
-      setDisplayedImages(finalImages);  // Обновляем изображения для показа
-      
-      // Рассчитываем конечную позицию y, чтобы целевое изображение оказалось в центре
-      const imageHeight = 150; // Высота картинки
-      const finalPosition = -imageHeight * 4; // Целевая картинка будет второй снизу в массиве из 5 картинок
-      controls.stop(); // Остановить текущую анимацию
+      const finalPosition = -width * 4;
+      controls.stop();
       controls.start({
         y: [0, finalPosition],
         transition: {
-          duration: 0.75, // Плавное замедление
+          duration: 0.75,
           ease: "easeOut"
         }
       }).then(() => {
+        console.log("Animation complete, stopping spin...");
         setIsSpinning(false);
-        if (onStop) onStop();
-      });
+        if (callback) callback();
+      }).catch(error => console.error("Error during stop animation:", error));
     }
-  }));
+}));
+
 
   
 
   return (
-    <div className="relative overflow-hidden w-slot-md sm:w-slot-lg h-reel-md sm:h-reel-lg border-4 border-blue-500 rounded-lg shadow-neon">
+    <div className=" relative overflow-hidden w-slot-md sm:w-slot-lg h-reel-md sm:h-reel-lg rounded-lg ">
       <motion.div animate={controls} initial={{ y: 0 }} className="flex flex-col">
         {displayedImages.map((img, index) => (
-          <img key={index} src={img} alt={`Symbol ${index}`} className="w-slot h-slot" />
+          <img key={index} src={img} alt={`Symbol ${index}`} className="sm:w-slot-lg w-slot-md sm:h-slot-lg h-slot-md" />
         ))}
       </motion.div>
     </div>

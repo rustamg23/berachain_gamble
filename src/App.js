@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import TailspinNFT from './components/TailspinNFT';
 import TailspinToken from './components/TailspinToken';
 import SlotMachine from './components/SlotMachine';
+import { Analytics } from "@vercel/analytics/react"
 import Main from './components/Main';
 import Roulette from './components/Roulette';
 
@@ -19,13 +20,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/nft" element={<TailspinNFT />}/>
+          {/* <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>
-          <Route path="/roulette" element={<Roulette />}/>
+          <Route path="/roulette" element={<Roulette />}/> */}
         </Routes>
       </BrowserRouter>
-
+      <Analytics/>
     </div>
   );
 }
