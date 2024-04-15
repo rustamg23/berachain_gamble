@@ -108,4 +108,18 @@ code {
     monospace;
 }
 
-
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  transition: top 0.3s ease, left 0.3s ease; /* Плавное изменение позиции */
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  pointer-events: none; /* Убедитесь, что тултип не мешает взаимодействию с другими элементами */
+  opacity: 0;
+  visibility: hidden;
+}
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}

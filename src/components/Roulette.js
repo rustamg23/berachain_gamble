@@ -1,20 +1,20 @@
 import React, { useState, useMemo  } from 'react';
-import PieChart from './PieChart';
+import CustomPieChart from './PieChart';
 import GameSwitcherWithTopBar from './GameSwitcher';
 
 function Game() {
     const [players, setPlayers] = useState([]);
     const [name, setName] = useState("");
-    const [wager, setWager] = useState("");
+    const [wager, setWager] = useState(100);
     const [totalPool, setTotalPool] = useState(0);
     const [balance, setBalance] = useState(0);
     const [bets, setBets] = useState(0);
     const colors = ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF"]; 
 
     const chartData = useMemo(() => players.map(player => ({
-        value: player.share, 
-        color: player.color,
-        name: player.name
+      name: player.name,
+      share: Number(player.share),  // Убедитесь, что это число, а не строка
+      color: player.color
     })), [players]);
 
     const handleAddPlayer = () => {
@@ -37,7 +37,7 @@ function Game() {
       setPlayers([...updatedPlayers, newPlayer]);
       setTotalPool(newTotalPool);
       setName("");
-      setWager("");
+      setWager(100);
 
       
 
@@ -69,7 +69,7 @@ function Game() {
                   className="bg-gray-700 p-2 rounded"
                 />
               </div>
-              <div>
+              {/* <div>
                 <p className='text-lg'>Bets</p>
                 <input
                   type="number"
@@ -78,7 +78,7 @@ function Game() {
                   placeholder="Enter bets"
                   className="bg-gray-700 p-2 rounded"
                 />
-              </div>
+              </div> */}
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-700 font-bold rounded w-32"
                 onClick = {handleAddPlayer}
@@ -91,7 +91,7 @@ function Game() {
             </div>
               
             <div className="flex-1 w-full  justify-center items-center flex bg-black"> 
-              <PieChart data={chartData} className=" " />;
+              <CustomPieChart data={chartData} />
             </div>
             <div className="w-240 bg-gray-800 text-white p-4 rounded-lg" > 
                 <div className="mt-4 overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>

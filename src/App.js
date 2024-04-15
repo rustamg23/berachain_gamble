@@ -20,10 +20,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/nft" element={<TailspinNFT />}/>
+          {/* <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>
-          <Route path="/roulette" element={<Roulette />}/>
+          <Route path="/roulette" element={<Roulette />}/> */}
         </Routes>
       </BrowserRouter>
       <Analytics/>
