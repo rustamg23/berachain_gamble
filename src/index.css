@@ -10,6 +10,16 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="number"]:hover, i
   cursor: url('./img/joint_.png'), auto;
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-animation {
+  animation: spin 3s ease-out;
+}
+
+
 .cursor-smoke {
   position: fixed;
   width: 20px;

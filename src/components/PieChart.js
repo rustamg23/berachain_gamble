@@ -1,102 +1,94 @@
-import React, { useState } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts';
-import AnimateGroup from 'react-smooth';
+import React, { useEffect, useState } from 'react';
+import { VictoryPie, VictoryTooltip } from 'victory';
 
-const CustomPieChart = ({ data }) => {
-  const [activeIndex, setActiveIndex] = useState(-1);
+const DynamicPieChart = ({ initialData, onPlayerHover, highlightedId }) => {
+  const [data, setData] = useState([]);
+  const [angle, setAngle] = useState(0); // Угол поворота стрелки
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setData(initialData.map(item => ({
+        id: item.id, // убедитесь, что каждый элемент имеет уникальный идентификатор
+        x: item.name,
+        y: parseInt(item.wager),
+        label: `${item.name}: ${item.wager}`
+      })));
+    }
+  }, [initialData]);
 
-  const renderActiveShape = (props) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
-    return (
-      <AnimateGroup
-        component="g"
-        appear={{
-          animation: 'zoom-in',
-          duration: 400
-        }}
-        enter={{
-          animation: 'zoom-in',
-          duration: 400,
-          delay: 0
-        }}
-        leave={{
-          animation: 'zoom-out',
-          duration: 400,
-          delay: 0
-        }}
-      >
-        <Sector
-          cx={cx}
-          cy={cy}
-          innerRadius={innerRadius + 10}
-          outerRadius={outerRadius + 10} // увеличение outerRadius на 10 при наведении
-          startAngle={startAngle}
-          endAngle={endAngle}
-          fill={fill}
-        />
-        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-          {payload.name}
-        </text>
-        <text x={cx} y={cy} dy={22} textAnchor="middle" fill="#333">
-          {`Value: ${value}`}
-        </text>
-      </AnimateGroup>
-    );
-  };
-  
-  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (data.length >= 2) {
+        const newAngle = Math.random() * 360;
+        setAngle(newAngle); // Новый угол для стрелки
+      }
+    }, 10000);
 
-  const onPieEnter = (_, index) => {
-    setActiveIndex(index);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  const handleMouseOver = (id) => {
+    onPlayerHover(id);
   };
 
-  const onPieLeave = () => {
-    setActiveIndex(-1);
+  const handleMouseOut = () => {
+    onPlayerHover(null);
   };
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
-      <PieChart>
-        {data.length > 0 ? (
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            label={(entry) => entry.name}
-            outerRadius={200}
-            innerRadius={160}
-            fill="#8884d8"
-            dataKey="share"
-            onMouseEnter={onPieEnter}
-            onMouseLeave={onPieLeave}
-            activeShape={renderActiveShape}
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={entry.color}
-                stroke={index === activeIndex ? 'black' : 'none'}
-                strokeWidth={index === activeIndex ? 4 : 1}
-
-              />
-            ))}
-          </Pie>
-        ) : (
-          <Pie
-            data={[{ name: "None", value: 100 }]}
-            cx="50%"
-            cy="50%"
-            outerRadius={150}
-            fill="#ccc"
-            dataKey="value"
-          >
-            <Cell fill="#ddd" />
-          </Pie>
-        )}
-        <Tooltip />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className=' z-50' style={{ position: 'relative', width: 'fit-content', margin: 'auto' }}>
+      {data.length > 0 && (
+        <>
+        <VictoryPie
+          className="z-50"
+          data={data}
+          colorScale="heatmap"
+          labelComponent={<VictoryTooltip />}
+          labels={({ datum }) => `# ${datum.y}`}
+          innerRadius={120}
+          radius={({ datum }) => datum.id === highlightedId ? 160 : 150}
+          // radius = {150}
+          style={{
+            labels: { fontSize: 20, fill: "white" },
+            data: {
+              fillOpacity: 0.9, stroke: "white", strokeWidth: ({ datum }) => datum.id === highlightedId ? 3 : 1
+            }
+          }}
+          animate={{
+            duration: 500,
+            onLoad: { duration: 500 },
+          }}
+          events={[{
+            target: "data",
+            eventHandlers: {
+              onMouseOver: (_, { datum }) => {
+                handleMouseOver(datum.id); // Передаем ID в функцию обработки
+                return [{
+                  mutation: (props) => ({
+                    style: { ...props.style, strokeWidth: 3 },
+                    // radius: props.radius + 10
+                  })
+                }];
+              },
+              onMouseOut: () => {
+                handleMouseOut(); // Сброс подсветки
+                return [{
+                  mutation: (props) => ({
+                    style: { ...props.style, strokeWidth: 1 }
+                  })
+                }];
+              }
+            }
+          }]}
+          
+          
+        />
+        <svg style={{ position: 'absolute', top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg)`, width: '30px', height: '30px', overflow: 'visible', zIndex: 1 }}>
+            <polygon points="-5,0 5,0 0,-20" fill="red" />
+          </svg>
+          </>
+      )}
+    </div>
   );
 };
 
-export default CustomPieChart;
+export default DynamicPieChart;

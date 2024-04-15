@@ -1,5 +1,5 @@
-import React, { useState, useMemo  } from 'react';
-import CustomPieChart from './PieChart';
+import React, { useState, useMemo, useEffect  } from 'react';
+import DynamicPieChart from './PieChart';
 import GameSwitcherWithTopBar from './GameSwitcher';
 
 function Game() {
@@ -10,12 +10,28 @@ function Game() {
     const [balance, setBalance] = useState(0);
     const [bets, setBets] = useState(0);
     const colors = ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF"]; 
+    const [activePlayerId, setActivePlayerId] = useState(null);
+    const [highlightedId, setHighlightedId] = useState(null);
+
+    const handleMouseEnter = (id) => {
+      setHighlightedId(id);
+    };
+
+    const handleMouseLeave = () => {
+      setHighlightedId(null);
+    };
 
     const chartData = useMemo(() => players.map(player => ({
       name: player.name,
       share: Number(player.share),  // Убедитесь, что это число, а не строка
-      color: player.color
+      color: player.color,
+      wager: player.wager,
+      id: player.id
     })), [players]);
+
+    useEffect(() => {
+      console.log(activePlayerId)
+    }, [activePlayerId]);
 
     const handleAddPlayer = () => {
       const newWager = parseFloat(wager);
@@ -65,7 +81,7 @@ function Game() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter wager"
+                  placeholder="Enter name"
                   className="bg-gray-700 p-2 rounded"
                 />
               </div>
@@ -90,17 +106,22 @@ function Game() {
             </div>
             </div>
               
-            <div className="flex-1 w-full  justify-center items-center flex bg-black"> 
-              <CustomPieChart data={chartData} />
+            <div className="flex-1 w-full  justify-center items-center flex bg-black z-10"> 
+              <DynamicPieChart initialData={chartData} onPlayerHover={setActivePlayerId} highlightedId={highlightedId}/>
             </div>
             <div className="w-240 bg-gray-800 text-white p-4 rounded-lg" > 
                 <div className="mt-4 overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
                     <ul>
                       {players.map(player => (
-                        <li key={player.id} className="flex justify-center space-x-8 items-center p-2 border-b text-white">
-                          <span className="font-bold text-white" style={{ color: player.color }}>{player.name} </span>
-                          <span>{player.wager} (Shares: {player.share}%)</span>
-                        </li>
+                        <li 
+                        key={player.id} 
+                        onMouseEnter={() => handleMouseEnter(player.id)}
+                        onMouseLeave={handleMouseLeave}
+                        className={`flex justify-center space-x-8 items-center p-2 border-b text-white ${player.id === highlightedId ? 'bg-gray-500' : ''}`}
+                    >
+                        <span className="font-bold text-white">{player.name}</span>
+                        <span>{player.wager} (Shares: {player.share}%)</span>
+                    </li>
                       ))}
                     </ul>
                 </div>
