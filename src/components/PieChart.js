@@ -1,92 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { VictoryPie, VictoryTooltip } from 'victory';
 
-const DynamicPieChart = ({ initialData, onPlayerHover, highlightedId }) => {
-  const [data, setData] = useState([]);
-  const [angle, setAngle] = useState(0); // Угол поворота стрелки
-  useEffect(() => {
+const DynamicPieChart = ({ initialData, highlightedId, setHighlightedId }) => {
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
     if (initialData && initialData.length > 0) {
       setData(initialData.map(item => ({
-        id: item.id, // убедитесь, что каждый элемент имеет уникальный идентификатор
+        id: item.id,
         x: item.name,
-        y: parseInt(item.wager),
-        label: `${item.name}: ${item.wager}`
+        y: parseInt(item.wager, 10),
+        label: `${item.name}: ${item.wager}`,
+        
       })));
     }
   }, [initialData]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (data.length >= 2) {
-        const newAngle = Math.random() * 360;
-        setAngle(newAngle); // Новый угол для стрелки
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [data]);
-
-  const handleMouseOver = (id) => {
-    onPlayerHover(id);
-  };
-
-  const handleMouseOut = () => {
-    onPlayerHover(null);
-  };
-
   return (
-    <div className=' z-50' style={{ position: 'relative', width: 'fit-content', margin: 'auto' }}>
-      {data.length > 0 && (
+    <div className='w-1/3 z-50' style={{ position: 'relative', width: 'fit-content', margin: 'auto' }}>
+      {data.length > 0 ? (
         <>
-        <VictoryPie
-          className="z-50"
-          data={data}
-          colorScale="heatmap"
-          labelComponent={<VictoryTooltip />}
-          labels={({ datum }) => `# ${datum.y}`}
-          innerRadius={120}
-          radius={({ datum }) => datum.id === highlightedId ? 160 : 150}
-          // radius = {150}
-          style={{
-            labels: { fontSize: 20, fill: "white" },
-            data: {
-              fillOpacity: 0.9, stroke: "white", strokeWidth: ({ datum }) => datum.id === highlightedId ? 3 : 1
-            }
-          }}
-          animate={{
-            duration: 500,
-            onLoad: { duration: 500 },
-          }}
-          events={[{
-            target: "data",
-            eventHandlers: {
-              onMouseOver: (_, { datum }) => {
-                handleMouseOver(datum.id); // Передаем ID в функцию обработки
-                return [{
-                  mutation: (props) => ({
-                    style: { ...props.style, strokeWidth: 3 },
-                    // radius: props.radius + 10
-                  })
-                }];
-              },
-              onMouseOut: () => {
-                handleMouseOut(); // Сброс подсветки
-                return [{
-                  mutation: (props) => ({
-                    style: { ...props.style, strokeWidth: 1 }
-                  })
-                }];
+          <VictoryPie
+            data={data}
+            colorScale={[
+              "#ff1d58", "#f75990", "#fff685", "#00DDFF", "#0049B7",
+              "#FF5733", "#C70039", "#900C3F", "#581845", "#FFC300",
+              "#DAF7A6", "#FFC0CB", "#9FE2BF", "#40E0D0", "#6495ED",
+              "#B03060", "#FF4500", "#7FFF00", "#9966CC", "#8A2BE2"
+            ]}
+            labelComponent={<VictoryTooltip />}
+            labels={({ datum }) => `# ${datum.y}`}
+            innerRadius={120}
+            radius={({ datum }) => datum.id === highlightedId ? 160 : 150}
+            style={{
+              labels: { fontSize: 20, fill: "white" },
+              data: {
+                fillOpacity: 0.9, stroke: "white", strokeWidth: ({ datum }) => datum.id === highlightedId ? 3 : 1
               }
-            }
-          }]}
-          
-          
-        />
-        <svg style={{ position: 'absolute', top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${angle}deg)`, width: '30px', height: '30px', overflow: 'visible', zIndex: 1 }}>
-            <polygon points="-5,0 5,0 0,-20" fill="red" />
-          </svg>
-          </>
-      )}
+            }}
+            animate={{
+              duration: 500,
+              onLoad: { duration: 500 }
+            }}
+            events={[{
+              target: "data",
+              eventHandlers: {
+                onMouseOver: () => ({
+                  mutation: (props) => {
+                    setHighlightedId(props.datum.id);
+                    return {
+                      style: { ...props.style, stroke: "white", strokeWidth: 3 }
+                    };
+                  }
+                }),
+                onMouseOut: () => ({
+                  mutation: (props) => {
+                    setHighlightedId(null);
+                    return {style: { ...props.style, stroke: "white", strokeWidth: 1 }};
+                  }
+                })
+              }
+            }]}
+          />
+        </>
+      ) : <p>No data available</p>}
     </div>
   );
 };
