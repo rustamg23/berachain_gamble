@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect  } from 'react';
 import DynamicPieChart from './PieChart';
 import GameSwitcherWithTopBar from './GameSwitcher';
 import PlayerForm from './PlayerForm';
+import PlayerTable from './PlayerTable';
+
 function Game() {
     const [players, setPlayers] = useState([]);
     const [name, setName] = useState("");
@@ -22,11 +24,11 @@ function Game() {
 
     const chartData = useMemo(() => players.map(player => ({
       name: player.name,
-      share: Number(player.share),  // Убедитесь, что это число, а не строка
+      total: totalPool,
       color: player.color,
       wager: player.wager,
       id: player.id
-    })), [players]);
+    })), [players, totalPool]);
 
     
     const handleAddPlayer = (name, wager) => {
@@ -62,25 +64,11 @@ function Game() {
             <PlayerForm onAddPlayer={handleAddPlayer} />
           </div>
               
-            <div className="flex-1 w-full  justify-center items-center flex bg-black z-10"> 
+            <div className="flex-1   justify-center items-center flex bg-black z-10"> 
               <DynamicPieChart initialData={chartData} highlightedId={highlightedId} setHighlightedId={setHighlightedId}/>
             </div>
             <div className="w-240 bg-gray-800 text-white p-4 rounded-lg" > 
-                <div className="mt-4 overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                    <ul>
-                      {players.map(player => (
-                        <li 
-                        key={player.id} 
-                        onMouseEnter={() => handleMouseEnter(player.id)}
-                        onMouseLeave={handleMouseLeave}
-                        className={`flex justify-center space-x-8 items-center p-2 border-b text-white ${player.id === highlightedId ? 'bg-gray-500' : ''} `}
-                    >
-                        <span className="font-bold text-white">{player.name}</span>
-                        <span>{player.wager} (Shares: {(player.wager*100/totalPool).toFixed(2)}%)</span>
-                    </li>
-                      ))}
-                    </ul>
-                </div>
+                <PlayerTable players={players} totalPool={totalPool} highlightedId={highlightedId} handleMouseEnter={handleMouseEnter} handleMouseLeave={handleMouseLeave}/>
               </div>
         </div>
         
