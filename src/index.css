@@ -90,7 +90,13 @@ a:hover, button:hover, input[type="submit"]:hover, input[type="number"]:hover, i
     background-size: fit;
     background-position: bottom;
     background-repeat: repeat;
-    background-image: url("./img/mob.png");
+    background-image: url("./img/mob2.png");
+  }
+  .bg2 {
+    background-size: fit;
+    background-position: top;
+    background-repeat: repeat;
+    background-image: url("./img/mob3.png");
   }
 }
 

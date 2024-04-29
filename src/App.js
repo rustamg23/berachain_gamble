@@ -8,15 +8,61 @@ import SlotMachine from './components/SlotMachine';
 import { Analytics } from "@vercel/analytics/react"
 import Main from './components/Main';
 import Roulette from './components/Roulette';
+import Mint from './components/Mint';
+import '@rainbow-me/rainbowkit/styles.css';
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+  darkTheme,
+  connectorsForWallets 
+} from '@rainbow-me/rainbowkit';
+import { WagmiProvider, useConfig } from 'wagmi';
+import {
+  berachainTestnet
+} from 'wagmi/chains';
+import {
+  QueryClientProvider,
+  QueryClient,
+} from "@tanstack/react-query";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {
+  rainbowWallet,
+  walletConnectWallet,
+  metaMaskWallet,
+  rabbyWallet,
+
+} from '@rainbow-me/rainbowkit/wallets';
 
 
 
 
 function App() {
 
+  const connectors = connectorsForWallets(
+    [
+      {
+        groupName: 'Recommended',
+        wallets: [metaMaskWallet, rabbyWallet, rainbowWallet, walletConnectWallet],
+      },
+    ],
+    {
+      appName: 'JunkyUrsas:MINT_PAGE',
+      projectId: 'fd551ef50da8814fb148b90c72200e26',
+    }
+  );
+  const config = getDefaultConfig({
+    connectors,
+    appName: 'JunkyUrsas:MINT_PAGE',
+    projectId: 'fd551ef50da8814fb148b90c72200e26',
+    chains: [berachainTestnet],
+  });
+  const queryClient = new QueryClient();
+
   return (
     <div className="App ">
-
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider  modalSize="compact" coolMode  locale= "en-US" theme={darkTheme({accentColor: 'red',overlayBlur: 'small', accentColorForeground: 'white',})} initialChain={berachainTestnet}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
@@ -24,8 +70,12 @@ function App() {
           <Route path="/token" element={<TailspinToken />}/>
           <Route path="/slots" element={<SlotMachine />}/>
           <Route path="/roulette" element={<Roulette />}/>
+          <Route path="/mint" element={<Mint />}/>
         </Routes>
       </BrowserRouter>
+      </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
       <Analytics/>
     </div>
   );

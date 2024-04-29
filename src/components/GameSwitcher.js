@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import {beargain, beraflip, slots } from './utils';
 import icon from '../img/icon.png'
+import {
+  useConnectModal,
+  useAccountModal,
+  useChainModal,
+} from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi'
+
+function trimAddress(address) {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
 
 const GameSwitcherWithTopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { openConnectModal } = useConnectModal();
+  const { openAccountModal } = useAccountModal();
+  const { openChainModal } = useChainModal();
+  
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  const { address, isConnected } = useAccount();
 
   return (
     <div>
@@ -20,8 +34,8 @@ const GameSwitcherWithTopBar = () => {
         <button className="text-white lg:hidden block" onClick={toggleMenu}>
           ☰
         </button>
-        <button className="text-white hidden lg:block" onClick={toggleMenu}>
-          Connect Wallet
+        <button className="text-white hidden lg:block bg-red-600 px-4 py-2 rounded shadow hover:bg-red-800 transition duration-150 ease-in-out" onClick={isConnected ? openAccountModal : openConnectModal}>
+          {isConnected ? trimAddress(address) : "Connect Wallet" }
         </button>
       </div>
 
@@ -41,6 +55,9 @@ const GameSwitcherWithTopBar = () => {
             <span>Beargain Raffle</span>
             <img src={slots} className='w-10 '/>
           </a>
+          <button className="text-white sm:hidden block  bg-red-600 px-4 py-2 rounded shadow hover:bg-red-800 transition duration-150 ease-in-out" onClick={isConnected ? openAccountModal : openConnectModal}>
+          {isConnected ? trimAddress(address) : "Connect Wallet" }
+        </button>
         </div>
       </div>
     </div>
