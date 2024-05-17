@@ -19,7 +19,7 @@ import {
 import { WagmiProvider, useConfig } from 'wagmi';
 import {
   berachainTestnet
-} from 'wagmi/chains';
+} from 'viem/chains';
 import {
   QueryClientProvider,
   QueryClient,
@@ -33,7 +33,9 @@ import {
 
 } from '@rainbow-me/rainbowkit/wallets';
 
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import CFlip from './components/CFlip';
 
 
 function App() {
@@ -60,11 +62,13 @@ function App() {
 
   return (
     <div className="App ">
+      <ToastContainer />
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider  modalSize="compact" coolMode  locale= "en-US" theme={darkTheme({accentColor: 'red',overlayBlur: 'small', accentColorForeground: 'white',})} initialChain={berachainTestnet}>
       <BrowserRouter>
         <Routes>
+          <Route path="/cflip" element={<CFlip />} />
           <Route path="/" element={<Main />} />
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>
