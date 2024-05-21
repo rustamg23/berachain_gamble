@@ -36,6 +36,7 @@ import {
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CFlip from './components/CFlip';
+import CoinFlip from './components/CoinFlip';
 
 
 function App() {
@@ -69,6 +70,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/cflip" element={<CFlip />} />
+          <Route path="/coinflip" element={<CoinFlip />} />
           <Route path="/" element={<Main />} />
           <Route path="/nft" element={<TailspinNFT />}/>
           <Route path="/token" element={<TailspinToken />}/>

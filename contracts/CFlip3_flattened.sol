@@ -862,6 +862,7 @@ abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable
     IEntropy public entropy;
     address public entropyProvider;
     VaultContract public vault;
+    uint256 public houseEdge;
 
     mapping(uint64 => Game) public games;
 
@@ -869,6 +870,7 @@ abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable
         require(isWhitelistedGame(msg.sender), "Not a whitelisted game");
         _;
     }
+
 
     function entropyCallback(
         uint64 sequenceNumber,
@@ -880,8 +882,34 @@ abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable
         delete games[sequenceNumber];
     }
 
+    function handleDeposit(address token, uint256 msgValue, uint256 fee, uint256 totalWager) internal {
+        if (token == address(0)) {
+            require(msgValue > fee, "Bet amount too low");
+            vault.deposit{value: msgValue - fee}(address(0), msgValue - fee);
+        } else {
+            IERC20 tokenContract = IERC20(token);
+            uint256 allowance = tokenContract.allowance(msg.sender, address(this));
+            require(allowance >= totalWager, "Allowance too low");
+            require(tokenContract.transferFrom(msg.sender, address(vault), totalWager), "Token transfer failed");
+            vault.deposit(token, totalWager);
+        }
+    }
+
+    function setHouseEdge(uint256 newEdge) external onlyOwner {
+        houseEdge = newEdge;
+    }
+
+    function setVaultContract(address newVault) external onlyOwner {
+        vault = VaultContract(newVault);
+    }
+
+
+
+    function isWhitelistedGame(address game) internal view  returns (bool) {
+        return vault.whitelistedGames(game);
+    }
+
     function handleGameResult(Game memory game, bytes32 randomNumber) internal virtual;
-    function isWhitelistedGame(address game) internal view virtual returns (bool);
     function getEntropy() internal view override returns (address) {
         return address(entropy);
     }
@@ -890,11 +918,14 @@ abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable
 }
 
 contract CFlip3 is BaseGameContract {
-    uint256 public houseEdge;
 
     modifier maxPayoutNotExceeded(uint256 wager, uint8 count, address token) {
-        require(calculatePayout(wager, count) <= vault.getBalance(token), "Max payout exceeded");
+        require(wager * count * 2 * (100 - houseEdge) / 100 <= vault.getBalance(token), "Max payout exceeded");
         _;
+    }
+
+    function calculatePayout(uint256 wager) internal view returns (uint256) {
+        return wager * 2 * (100 - houseEdge) / 100;
     }
 
     constructor(address vaultAddress, address entropyAddress, address entropyProviderAddress) 
@@ -951,18 +982,9 @@ contract CFlip3 is BaseGameContract {
         emit GameStarted(msg.sender, params.wager, params.count, params.token);
     }
 
-    function handleDeposit(address token, uint256 msgValue, uint256 fee, uint256 totalWager) internal {
-        if (token == address(0)) {
-            require(msgValue > fee, "Bet amount too low");
-            vault.deposit{value: msgValue - fee}(address(0), msgValue - fee);
-        } else {
-            IERC20 tokenContract = IERC20(token);
-            uint256 allowance = tokenContract.allowance(msg.sender, address(this));
-            require(allowance >= totalWager, "Allowance too low");
-            require(tokenContract.transferFrom(msg.sender, address(vault), totalWager), "Token transfer failed");
-            vault.deposit(token, totalWager);
-        }
-    }
+
+
+
 
     function handleGameResult(Game memory game, bytes32 randomNumber) internal override {
         GameData memory gameSettings = decodeGameData(game.gameData);
@@ -978,7 +1000,7 @@ contract CFlip3 is BaseGameContract {
 
             uint256 payout = 0;
             if (won) {
-                payout = calculatePayout(game.wager, 1);
+                payout = calculatePayout(game.wager);
                 totalPayout += payout;
                 stopGainCounter += payout;
                 wonCount++;
@@ -1006,17 +1028,7 @@ contract CFlip3 is BaseGameContract {
         emit GameResult(game.player, totalRefund, randomNumber, wonCount, playedCount, game.token);
     }
 
-    function setHouseEdge(uint256 newEdge) external onlyOwner {
-        houseEdge = newEdge;
-    }
 
-    function calculatePayout(uint256 wager, uint8 count) internal view returns (uint256) {
-        return wager * count * 2 * (100 - houseEdge) / 100;
-    }
-
-    function isWhitelistedGame(address game) internal view override returns (bool) {
-        return vault.whitelistedGames(game);
-    }
 }
 
 abstract contract VaultContract is ReentrancyGuard, Ownable {
@@ -1116,5 +1128,214 @@ abstract contract VaultContract is ReentrancyGuard, Ownable {
 
     function getBalance(address token) external view returns (uint256) {
         return tokenBalances[token];
+    }
+}
+
+contract ProbabilityGame is BaseGameContract {
+    using SafeMath for uint256;
+
+    struct GameParams {
+        uint8 count;
+        uint256 stopGain;
+        uint256 stopLoss;
+        uint8 probability; // Вероятность выигрыша от 1% до 69%
+        uint256 wager;
+        address token;
+        bytes32 userRandomNumber;
+    }
+    
+    struct GameData {
+        uint256 stopGain;
+        uint256 stopLoss;
+        uint8 probability;
+    }
+
+    function calculatePayout(uint256 wager, uint8 probability) internal view returns (uint256) {
+        uint256 multiplier = (100 / probability);
+        return wager * multiplier * (100 - houseEdge) / 100;
+    }
+    modifier maxPayoutNotExceeded(uint256 wager, uint8 count, uint8 probability, address token) {
+        require(wager * count * (100 / probability) * (100 - houseEdge) / 100 <= vault.getBalance(token), "Max payout exceeded");
+        _;
+    }
+
+    constructor(address vaultAddress, address entropyAddress, address entropyProviderAddress) 
+        Ownable(msg.sender) 
+    {
+        vault = VaultContract(vaultAddress);
+        entropy = IEntropy(entropyAddress);
+        entropyProvider = entropyProviderAddress;
+    }
+
+    function decodeGameData(bytes memory data) internal pure returns (GameData memory) {
+        (uint256 stopGain, uint256 stopLoss, uint8 probability) = abi.decode(data, (uint256, uint256, uint8));
+        return GameData(stopGain, stopLoss, probability);
+    }
+
+    function startGame(GameParams memory params) 
+        external payable maxPayoutNotExceeded(params.wager, params.count, params.probability, params.token) nonReentrant 
+    {
+        require(params.probability >= 1 && params.probability <= 69, "Invalid probability");
+        
+        uint256 fee = entropy.getFee(entropyProvider);
+        uint256 totalWager = params.wager * params.count;
+        require(msg.value >= fee, "Insufficient fee");
+
+        handleDeposit(params.token, msg.value, fee, totalWager);
+
+        bytes memory gameData = abi.encode(params.stopGain, params.stopLoss, params.probability);
+
+        uint64 sequenceNumber = entropy.requestWithCallback{value: fee}(entropyProvider, params.userRandomNumber);
+
+        games[sequenceNumber] = Game({
+            count: params.count,
+            player: msg.sender,
+            gameData: gameData,
+            wager: params.wager,
+            startTime: block.timestamp,
+            token: params.token
+        });
+
+        emit GameStarted(msg.sender, params.wager, params.count, params.token);
+    }
+
+    function handleGameResult(Game memory game, bytes32 randomNumber) internal override {
+        GameData memory gameSettings = decodeGameData(game.gameData);
+
+        uint256 totalPayout = 0;
+        uint256 stopGainCounter = 0;
+        uint256 stopLossCounter = 0;
+        uint8 wonCount = 0;
+        uint8 playedCount = 0;
+
+        for (uint8 i = 0; i < game.count; i++) {
+            bool won = (uint256(randomNumber) % 100) < gameSettings.probability;
+
+            uint256 payout = 0;
+            if (won) {
+                payout = calculatePayout(game.wager, gameSettings.probability);
+                totalPayout += payout;
+                stopGainCounter += payout;
+                wonCount++;
+            } else {
+                stopLossCounter += game.wager;
+            }
+
+            playedCount++;
+
+            if ((gameSettings.stopGain > 0 && stopGainCounter >= gameSettings.stopGain * game.wager / 100) ||
+                (gameSettings.stopLoss > 0 && stopLossCounter >= gameSettings.stopLoss * game.wager / 100)) {
+                break;
+            }
+
+            randomNumber >>= 2; // Shift two bits for next iteration
+        }
+
+        uint256 unplayedWager = game.wager * (game.count - playedCount);
+        uint256 totalRefund = totalPayout + unplayedWager;
+
+        if (totalRefund > 0) {
+            vault.requestPayout(game.player, totalRefund, game.token);
+        }
+
+        emit GameResult(game.player, totalRefund, randomNumber, wonCount, playedCount, game.token);
+    }
+
+}
+
+contract SlotsGame is BaseGameContract {
+    using SafeMath for uint256;
+
+    struct GameParams {
+        uint8 count;
+        uint256 wager;
+        address token;
+        bytes32 userRandomNumber;
+    }
+
+    struct GameData {
+        bool nothing;
+    }
+
+    constructor(address vaultAddress, address entropyAddress, address entropyProviderAddress) 
+        Ownable(msg.sender) 
+    {
+        vault = VaultContract(vaultAddress);
+        entropy = IEntropy(entropyAddress);
+        entropyProvider = entropyProviderAddress;
+    }
+
+    modifier maxPayoutNotExceeded(uint256 wager, uint8 count, address token) {
+        require(wager * 100 * count <= vault.getBalance(token), "Max payout exceeded");
+        _;
+    }
+
+    function startGame(GameParams memory params) 
+        external payable maxPayoutNotExceeded(params.wager, params.count, params.token) 
+    {
+        uint256 fee = entropy.getFee(entropyProvider);
+        uint256 totalWager = params.wager * params.count;
+        require(msg.value >= fee, "Insufficient fee");
+
+        handleDeposit(params.token, msg.value, fee, totalWager);
+
+        uint64 sequenceNumber = entropy.requestWithCallback{value: fee}(entropyProvider, params.userRandomNumber);
+
+        games[sequenceNumber] = Game({
+            count: params.count,
+            player: msg.sender,
+            gameData: "",
+            wager: params.wager,
+            startTime: block.timestamp,
+            token: params.token
+        });
+
+        emit GameStarted(msg.sender, params.wager, params.count, params.token);
+    }
+
+    function handleGameResult(Game memory game, bytes32 randomNumber) internal override {
+        uint256 totalPayout = 0;
+        uint8 wonCount = 0;
+
+        for (uint8 i = 0; i < game.count; i++) {
+            uint8 symbol1 = uint8(uint256(randomNumber) % 7);
+            uint8 symbol2 = uint8((uint256(randomNumber) / 7) % 7);
+            uint8 symbol3 = uint8((uint256(randomNumber) / 49) % 7);
+
+            uint256 payout = calculatePayout(game.wager, symbol1, symbol2, symbol3);
+            totalPayout += payout;
+
+            if (payout > 0) {
+                wonCount++;
+            }
+
+            randomNumber >>= 3; // Shift by 3 bits for next iteration
+        }
+
+        if (totalPayout > 0) {
+            vault.requestPayout(game.player, totalPayout, game.token);
+        }
+
+        emit GameResult(game.player, totalPayout, randomNumber, wonCount, game.count, game.token);
+    }
+
+    function calculatePayout(uint256 wager, uint8 symbol1, uint8 symbol2, uint8 symbol3) internal view returns (uint256) {
+        uint256 multiplier = getMultiplier(symbol1, symbol2, symbol3);
+        return wager.mul(multiplier).mul(100 - houseEdge).div(100);
+    }
+
+    function getMultiplier(uint8 symbol1, uint8 symbol2, uint8 symbol3) internal pure returns (uint256) {
+        if (symbol1 == 0 && symbol2 == 0 && symbol3 == 0) return 100;
+        if (symbol1 == 1 && symbol2 == 1 && symbol3 == 1) return 45;
+        if (symbol1 == 2 && symbol2 == 2 && symbol3 == 2) return 20;
+        if (symbol1 == 2 && symbol2 == 2 && symbol3 == 1) return 20;
+        if (symbol1 == 3 && symbol2 == 3 && symbol3 == 3) return 12;
+        if (symbol1 == 3 && symbol2 == 3 && symbol3 == 1) return 12;
+        if (symbol1 == 4 && symbol2 == 4 && symbol3 == 4) return 10;
+        if (symbol1 == 4 && symbol2 == 4 && symbol3 == 1) return 10;
+        if (symbol1 == 5 && symbol2 == 5 && symbol3 == 5) return 5;
+        if (symbol1 == 5 && symbol2 == 5) return 3;
+        if (symbol1 == 5) return 2;
+        return 0;
     }
 }
