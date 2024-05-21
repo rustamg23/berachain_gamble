@@ -1,4 +1,3 @@
-
 // File: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
@@ -836,11 +835,191 @@ abstract contract ReentrancyGuard {
 
 
 
+abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable {
+    struct Game {
+        uint8 count;
+        address player;
+        bytes gameData;
+        uint256 wager;
+        uint256 startTime;
+        address token;
+    }
 
+    event GameStarted(
+        address indexed player, 
+        uint256 wager, 
+        uint8 count, 
+        address indexed token);
+    event GameResult(
+        address indexed player,
+        uint256 payout,
+        bytes32 indexed randomNumber,
+        uint8 wonCount,
+        uint8 totalCount,
+        address indexed token
+    );
 
-contract VaultContract is ReentrancyGuard, Ownable {
-    using SafeMath for uint256;
+    IEntropy public entropy;
+    address public entropyProvider;
+    VaultContract public vault;
 
+    mapping(uint64 => Game) public games;
+
+    modifier onlyWhitelistedGames() {
+        require(isWhitelistedGame(msg.sender), "Not a whitelisted game");
+        _;
+    }
+
+    function entropyCallback(
+        uint64 sequenceNumber,
+        address,
+        bytes32 randomNumber
+    ) internal override {
+        Game memory game = games[sequenceNumber];
+        handleGameResult(game, randomNumber);
+        delete games[sequenceNumber];
+    }
+
+    function handleGameResult(Game memory game, bytes32 randomNumber) internal virtual;
+    function isWhitelistedGame(address game) internal view virtual returns (bool);
+    function getEntropy() internal view override returns (address) {
+        return address(entropy);
+    }
+
+    receive() external payable {}
+}
+
+contract CFlip3 is BaseGameContract {
+    uint256 public houseEdge;
+
+    modifier maxPayoutNotExceeded(uint256 wager, uint8 count, address token) {
+        require(calculatePayout(wager, count) <= vault.getBalance(token), "Max payout exceeded");
+        _;
+    }
+
+    constructor(address vaultAddress, address entropyAddress, address entropyProviderAddress) 
+        Ownable(msg.sender) 
+    {
+        vault = VaultContract(vaultAddress);
+        entropy = IEntropy(entropyAddress);
+        entropyProvider = entropyProviderAddress;
+    }
+
+    struct GameParams {
+        uint8 count;
+        uint256 stopGain;
+        uint256 stopLoss;
+        bool betOnHeads;
+        uint256 wager;
+        address token;
+        bytes32 userRandomNumber;
+    }
+        
+    struct GameData {
+        uint256 stopGain;
+        uint256 stopLoss;
+        bool betOnHeads;
+    }
+
+    function decodeGameData(bytes memory data) internal pure returns (GameData memory) {
+        (uint256 stopGain, uint256 stopLoss, bool betOnHeads) = abi.decode(data, (uint256, uint256, bool));
+        return GameData(stopGain, stopLoss, betOnHeads);
+    }
+
+    function startGame(GameParams memory params) 
+        external payable maxPayoutNotExceeded(params.wager, params.count, params.token) nonReentrant 
+    {
+        uint256 fee = entropy.getFee(entropyProvider);
+        uint256 totalWager = params.wager * params.count;
+        require(msg.value >= fee, "Insufficient fee");
+
+        handleDeposit(params.token, msg.value, fee, totalWager);
+
+        bytes memory gameData = abi.encode(params.stopGain, params.stopLoss, params.betOnHeads);
+
+        uint64 sequenceNumber = entropy.requestWithCallback{value: fee}(entropyProvider, params.userRandomNumber);
+
+        games[sequenceNumber] = Game({
+            count: params.count,
+            player: msg.sender,
+            gameData: gameData,
+            wager: params.wager,
+            startTime: block.timestamp,
+            token: params.token
+        });
+
+        emit GameStarted(msg.sender, params.wager, params.count, params.token);
+    }
+
+    function handleDeposit(address token, uint256 msgValue, uint256 fee, uint256 totalWager) internal {
+        if (token == address(0)) {
+            require(msgValue > fee, "Bet amount too low");
+            vault.deposit{value: msgValue - fee}(address(0), msgValue - fee);
+        } else {
+            IERC20 tokenContract = IERC20(token);
+            uint256 allowance = tokenContract.allowance(msg.sender, address(this));
+            require(allowance >= totalWager, "Allowance too low");
+            require(tokenContract.transferFrom(msg.sender, address(vault), totalWager), "Token transfer failed");
+            vault.deposit(token, totalWager);
+        }
+    }
+
+    function handleGameResult(Game memory game, bytes32 randomNumber) internal override {
+        GameData memory gameSettings = decodeGameData(game.gameData);
+
+        uint256 totalPayout = 0;
+        uint256 stopGainCounter = 0;
+        uint256 stopLossCounter = 0;
+        uint8 wonCount = 0;
+        uint8 playedCount = 0;
+
+        for (uint8 i = 0; i < game.count; i++) {
+            bool won = (uint256(randomNumber) % 2 == 0) == gameSettings.betOnHeads;
+
+            uint256 payout = 0;
+            if (won) {
+                payout = calculatePayout(game.wager, 1);
+                totalPayout += payout;
+                stopGainCounter += payout;
+                wonCount++;
+            } else {
+                stopLossCounter += game.wager;
+            }
+
+            playedCount++;
+
+            if ((gameSettings.stopGain > 0 && stopGainCounter >= gameSettings.stopGain * game.wager / 100) ||
+                (gameSettings.stopLoss > 0 && stopLossCounter >= gameSettings.stopLoss * game.wager / 100)) {
+                break;
+            }
+
+            randomNumber >>= 1;
+        }
+
+        uint256 unplayedWager = game.wager * (game.count - playedCount);
+        uint256 totalRefund = totalPayout + unplayedWager;
+
+        if (totalRefund > 0) {
+            vault.requestPayout(game.player, totalRefund, game.token);
+        }
+
+        emit GameResult(game.player, totalRefund, randomNumber, wonCount, playedCount, game.token);
+    }
+
+    function setHouseEdge(uint256 newEdge) external onlyOwner {
+        houseEdge = newEdge;
+    }
+
+    function calculatePayout(uint256 wager, uint8 count) internal view returns (uint256) {
+        return wager * count * 2 * (100 - houseEdge) / 100;
+    }
+
+    function isWhitelistedGame(address game) internal view override returns (bool) {
+        return vault.whitelistedGames(game);
+    }
+}
+
+abstract contract VaultContract is ReentrancyGuard, Ownable {
     mapping(address => bool) public whitelistedGames;
     mapping(address => bool) public blacklistedAddresses;
     mapping(address => uint256) public tokenBalances;
@@ -871,10 +1050,10 @@ contract VaultContract is ReentrancyGuard, Ownable {
     function deposit(address token, uint256 amount) external payable nonReentrant {
         if (token == address(0)) {
             require(msg.value == amount, "Invalid ETH amount");
-            tokenBalances[address(0)] = tokenBalances[address(0)].add(msg.value);
+            tokenBalances[address(0)] += msg.value;
         } else {
             require(IERC20(token).transferFrom(msg.sender, address(this), amount), "Transfer failed");
-            tokenBalances[token] = tokenBalances[token].add(amount);
+            tokenBalances[token] += amount;
         }
         emit Deposit(msg.sender, amount, token);
     }
@@ -886,7 +1065,7 @@ contract VaultContract is ReentrancyGuard, Ownable {
         } else {
             require(IERC20(token).transfer(user, amount), "Transfer failed");
         }
-        tokenBalances[token] = tokenBalances[token].sub(amount);
+        tokenBalances[token] -= amount;
         emit Payout(user, amount, token);
     }
 
@@ -898,7 +1077,7 @@ contract VaultContract is ReentrancyGuard, Ownable {
         } else {
             require(IERC20(token).transfer(owner(), amount), "Transfer failed");
         }
-        tokenBalances[token] = tokenBalances[token].sub(amount);
+        tokenBalances[token] -= amount;
     }
 
     function setHouseEdge(uint256 newEdge) external onlyOwner {
@@ -937,186 +1116,5 @@ contract VaultContract is ReentrancyGuard, Ownable {
 
     function getBalance(address token) external view returns (uint256) {
         return tokenBalances[token];
-    }
-}
-
-// File: beraflip/BaseGameContract.sol
-
-
-
-
-
-
-
-
-abstract contract BaseGameContract is ReentrancyGuard, IEntropyConsumer, Ownable {
-    struct Game {
-        uint8 count;
-        address player;
-        bytes gameData;
-        uint256 wager;
-        uint256 startTime;
-        address token;
-    }
-
-    event GameStarted(address player, uint256 wager, uint8 count, address token);
-    event GameResult(address player, bool won, uint256 payout);
-    event MultiBetProcessed(address player, uint256 totalBetAmount, uint256 totalPayout);
-
-    IEntropy public entropy;
-    address public entropyProvider;
-    VaultContract public vault;
-
-    mapping(uint64 => Game) public games;
-
-    modifier onlyWhitelistedGames() {
-        require(isWhitelistedGame(msg.sender), "Not a whitelisted game");
-        _;
-    }
-
-
-
-
-
-    function entropyCallback(
-        uint64 sequenceNumber,
-        address,
-        bytes32 randomNumber
-    ) internal override {
-        Game memory game = games[sequenceNumber];
-        handleGameResult(game, randomNumber);
-        delete games[sequenceNumber];
-    }
-
-
-
-    function handleGameResult(Game memory game, bytes32 randomNumber) internal virtual;
-
-    function isWhitelistedGame(address game) internal view virtual returns (bool);
-
-    function getEntropy() internal view override returns (address) {
-        return address(entropy);
-    }
-
-    receive() external payable {}
-}
-
-// File: beraflip/CFlip3.sol
-
-
-
-
-contract CFlip3 is BaseGameContract {
-    using SafeMath for uint256;
-
-    uint256 public houseEdge;
-
-    modifier maxPayoutNotExceeded(uint256 wager, uint8 count, address token) {
-        require(calculatePayout(wager, count) <= vault.getBalance(token), "Max payout exceeded");
-        _;
-    }
-
-    constructor() 
-        Ownable(msg.sender)
-    {
-        vault = VaultContract(address(0x4bc5871E5140d836a57bA8a976705B5d31c2896C));
-        entropy = IEntropy(address(0x549Ebba8036Ab746611B4fFA1423eb0A4Df61440));
-        entropyProvider = address(0x6CC14824Ea2918f5De5C2f75A9Da968ad4BD6344);
-    }
-        
-    struct GameData {
-        uint256 stopGain;
-        uint256 stopLoss;
-    }
-
-    function decodeGameData(bytes memory data) internal pure returns (GameData memory) {
-        (uint256 stopGain, uint256 stopLoss) = abi.decode(data, (uint256, uint256));
-        return GameData(stopGain, stopLoss);
-    }
-
-    function startGame(uint8 count, bytes calldata gameData, uint256 wager, address token, bytes32 userRandomNumber) 
-        external payable maxPayoutNotExceeded(wager, count, token) nonReentrant 
-    {
-        uint256 fee = entropy.getFee(entropyProvider);
-        uint256 totalWager = wager.mul(count);
-        require(msg.value >= fee, "Insufficient fee");
-
-        if (token == address(0)) {
-            require(msg.value > fee, "Bet amount too low");
-            vault.deposit{value: msg.value.sub(fee)}(address(0), msg.value.sub(fee));
-        } else {
-            IERC20 tokenContract = IERC20(token);
-            uint256 allowance = tokenContract.allowance(msg.sender, address(this));
-            require(allowance >= totalWager, "Allowance too low");
-            require(tokenContract.transferFrom(msg.sender, address(vault), totalWager), "Token transfer failed");
-            vault.deposit(token, totalWager);
-        }
-
-        uint64 sequenceNumber = entropy.requestWithCallback{value: fee}(entropyProvider, userRandomNumber);
-
-        games[sequenceNumber] = Game({
-            count: count,
-            player: msg.sender,
-            gameData: gameData,
-            wager: wager,
-            startTime: block.timestamp,
-            token: token
-        });
-
-        emit GameStarted(msg.sender, wager, count, token);
-    }
-
-    function handleGameResult(Game memory game, bytes32 randomNumber) internal override {
-        GameData memory gameSettings = decodeGameData(game.gameData);
-
-        uint256 totalPayout = 0;
-        uint256 stopGainCounter = 0;
-        uint256 stopLossCounter = 0;
-        uint8 playedCount = 0;
-
-        for (uint8 i = 0; i < game.count; i++) {
-            // Логика обработки случайного числа и определения победителя для каждой ставки
-            bool won = (uint256(randomNumber) % 2 == 0); // Пример логики: выигрыш, если число четное
-
-            uint256 payout = 0;
-            if (won) {
-                payout = calculatePayout(game.wager, 1); // Расчет выплаты для одной ставки
-                totalPayout += payout;
-                stopGainCounter += payout;
-            } else {
-                stopLossCounter += game.wager;
-            }
-
-            playedCount++;
-
-            if ((gameSettings.stopGain > 0 && stopGainCounter >= gameSettings.stopGain) ||
-                (gameSettings.stopLoss > 0 && stopLossCounter >= gameSettings.stopLoss)) {
-                break; // Прекращаем процесс, если достигнуты стоп-гейн или стоп-лосс
-            }
-
-            // Сдвиг случайного числа для следующей ставки
-            randomNumber >>= 1;
-        }
-
-        uint256 unplayedWager = game.wager.mul(game.count - playedCount);
-        uint256 totalRefund = totalPayout.add(unplayedWager);
-
-        if (totalRefund > 0) {
-            vault.requestPayout(game.player, totalRefund, game.token);
-        }
-
-        emit GameResult(game.player, totalPayout > 0, totalRefund);
-    }
-
-    function setHouseEdge(uint256 newEdge) external onlyOwner {
-        houseEdge = newEdge;
-    }
-
-    function calculatePayout(uint256 wager, uint8 count) internal view returns (uint256) {
-        return wager.mul(count).mul(2).mul(uint256(100).sub(houseEdge)).div(100);
-    }
-
-    function isWhitelistedGame(address game) internal view override returns (bool) {
-        return vault.whitelistedGames(game);
     }
 }
