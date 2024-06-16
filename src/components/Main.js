@@ -45,7 +45,7 @@ function Main() {
           <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
             <img src={x} alt="X" className={iconSizeClasses}/>
           </a>
-          <a href='https://discord.com/invite/junkyursas' target="_blank" rel="noopener noreferrer">
+          <a href='https://discord.gg/wPKgTwthec' target="_blank" rel="noopener noreferrer">
             <img src={discord} alt="Discord" className={iconSizeClasses} />
           </a>
           
@@ -61,7 +61,7 @@ function Main() {
             <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
               <img src={x} alt="X" className={iconSizeClassesMob}/>
             </a>
-            <a href='https://discord.com/invite/junkyursas' target="_blank" rel="noopener noreferrer">
+            <a href='https://discord.gg/wPKgTwthec' target="_blank" rel="noopener noreferrer">
               <img src={discord} alt="Discord" className={iconSizeClassesMob} />
             </a>
 
@@ -87,7 +87,7 @@ function Main() {
             <a href='https://twitter.com/JunkyUrsas' target="_blank" rel="noopener noreferrer">
               <img src={x} alt="X" className={iconSizeClassesMob}/>
             </a>
-            <a href='https://discord.com/invite/junkyursas' target="_blank" rel="noopener noreferrer">
+            <a href='https://discord.gg/wPKgTwthec' target="_blank" rel="noopener noreferrer">
               <img src={discord} alt="Discord" className={iconSizeClassesMob} />
             </a>
 
