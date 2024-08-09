@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 
 const DEFAULT_TEXT = "GO TO APP";
-const HOVER_TEXT = "SOON";
+const HOVER_TEXT = "V2 LIVE";
 
 const ActionButton = () => {
   const [text, setText] = useState<string>(DEFAULT_TEXT);
