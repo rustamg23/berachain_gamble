@@ -35,10 +35,7 @@ export default function Home() {
           JUNKY URSAS
         </h1>
         <h2 className="m:max-w-[609px] mb-3 m:mb-6 text-[16px] xs:text-[20px]">
-          Junky Ursas is an exhilarating NFT project that brings together a
-          collection of uniquely designed bear-themed digital art pieces, each
-          one imbued with its own quirky personality and style. This inventive
-          series not only celebrates the creativity and diversity.
+          GambleFi hub of Berachain with unique features like LP providing Vaults and BGT incentives
         </h2>
         <div className="flex items-center gap-8 mb-3 m:mb-6">
           {socials.map((link, index) => (
